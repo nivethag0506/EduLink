@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Portal</title>
+    {% load static %}
+    {% load tz %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <style>
+        /* Reset and global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        /* Redesigned Navbar Styles */
+        .navbar-container {
+            background: linear-gradient(90deg, #34495e, #2c3e50); /* Dark Professional Gradient */
+            color: #ecf0f1; /* Light Text */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: height 0.3s ease;
+        }
+
+        .navbar-container.expanded {
+            height: auto;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .navbar-logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ecf0f1;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar ul li {
+            display: inline-block;
+        }
+
+        .navbar ul li a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            background-color: rgba(216, 241, 25, 0.2);
+            color: #bcef04;
+            text-decoration: underline;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(108, 43, 237, 0.4);
+        }
+
+        .navbar-toggle {
+            display: none;
+            background-color: #ecf0f1;
+            border: none;
+            color: #34495e;
+            padding: 10px 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar-toggle:hover {
+            background-color: #bdc3c7;
+        }
+
+        @media (max-width: 1280px) {
+            .navbar ul {
+                flex-direction: column;
+                gap: 15px;
+                display: none;
+                background-color: #34495e;
+                width: 100%;
+                padding: 15px 0;
+            }
+
+            .navbar ul.active {
+                display: flex;
+            }
+
+            .navbar-container.expanded .navbar ul {
+                display: flex;
+            }
+
+            .navbar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .navbar ul li a {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            .navbar-toggle {
+                font-size: 16px;
+                padding: 8px 12px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .navbar ul {
+                display: flex !important; /* Always show navbar on larger screens */
+            }
+
+            .navbar-toggle {
+                display: none; /* Hide toggle button on larger screens */
+            }
+        }
+
+        /* Background image and overlay */
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{% static 'images/image.png' %}") no-repeat center center;
+            background-size: cover;
+            z-index: 1;
+            opacity: 0.4; /* Adjust the opacity value as needed (0.0 to 1.0) */
+        }
+
+        /* Main container for boards */
+        .main-container {
+            display: flex;
+            justify-content: flex-end; /* Align to the right */
+            align-items: flex-start;
+            padding: 30px;
+            z-index: 3;
+            position: relative;
+            flex-grow: 1;
+            overflow-y: auto;
+            right: 0;
+        }
+
+        /* Removed Notice Board Styles */
+
+        .event-board:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-board h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #ecf0f1;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background-color: #2980b9; /* Solid background color */
+            padding: 12px;
+            border-radius: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10; /* Ensure it stays on the top layer */
+        }
+
+        .event-board ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            height: 400px; /* Adjust height as needed */
+            position: relative;
+            animation: scroll-content 20s linear infinite;
+        }
+
+        @keyframes scroll-content {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+
+        .event-board ul:hover {
+            animation-play-state: paused;
+        }
+
+        .event-board li {
+            margin-bottom: 10px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .event-board li:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-board li h4 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+
+        .event-board li p {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .event-board li small {
+            font-size: 14px;
+            color: #555;
+            display: block;
+        }
+
+        .event-board li:hover {
+            transform: scale(1.05);
+            background-color: rgba(0, 0, 255, 0.3); /* Blue color */
+            border: 2px solid rgba(255, 0, 0, 0.5); /* Red border */
+        }
+
+        .event-board h4 {
+            font-size: 24px;
+            color: #cbf05f;
+            margin-bottom: 15px;
+            font-weight: bolder;
+        }
+
+        .event-board p {
+            font-size: 16px;
+            color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .event-board small {
+            font-size: 14px;
+            color: #f8f9fa;
+            display: block;
+            margin-top: 8px;
+        }
+
+        .event-board small.date {
+            font-size: 18px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Footer styles */
+        footer {
+            background: linear-gradient(90deg, #0056b3, #007bff);
+            color: #fff;
+            text-align: left;
+            padding: 25px 40px;
+            z-index: 4;
+            font-size: 14px;
+            letter-spacing: 1px;
+            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-start;
+            margin-top: auto;
+        }
+
+        footer .footer-left {
+            flex: 1;
+        }
+
+        footer p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        footer #current-datetime,
+        footer #visitor-count {
+            font-size: 16px;
+            margin-top: 12px;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        footer #current-datetime:hover,
+        footer #visitor-count:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        footer #current-datetime span,
+        footer #visitor-count span {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        footer p:first-child {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        #footer-sidebar3 {
+            flex: 1;
+            max-width: 300px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #footer-sidebar3 iframe {
+            border-radius: 12px;
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+
+        #footer-sidebar3 .widget-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* Responsive styles */
+
+        @media (max-width: 1024px) {
+            footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            #footer-sidebar3 {
+                max-width: 100%;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .event-board h2 {
+                font-size: 24px;
+            }
+
+            .event-board h4 {
+                font-size: 16px;
+            }
+
+            .event-board p {
+                font-size: 14px;
+            }
+
+            footer {
+                padding: 20px;
+            }
+
+            footer #current-datetime, footer #visitor-count {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            #footer-sidebar3 iframe {
+                height: 150px;
+            }
+        }
+        /* Top Alumni Section Styles */
+        .top-alumni {
+            background: linear-gradient(135deg, #1e3c72, #2a5298); /* Professional gradient */
+            padding: 10px;
+            text-align: center;
+            color: #fff;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .top-alumni h2 {
+            font-size: 36px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Enhanced shadow */
+            color: #f1c40f; /* Golden color */
+        }
+
+        .alumni-carousel {
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 350px;
+        }
+
+        .alumni-track {
+            display: flex;
+            gap: 20px;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .alumni-card {
+            background: linear-gradient(135deg, #ffffff, #f0f0f0); /* Subtle gradient */
+            color: #333;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+            padding: 10px;
+            text-align: center;
+            width: 300px; /* Increased width */
+            flex-shrink: 0;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alumni-card:hover {
+            transform: translateY(-15px) scale(1.05); /* Enhanced hover effect */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .alumni-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.05); /* Subtle overlay */
+            z-index: -1;
+            border-radius: 20px;
+        }
+
+        .alumni-photo {
+            width: 100px; /* Increased size */
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid #2a5298; /* Enhanced border */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .alumni-card h4 {
+            font-size: 20px; /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1e3c72;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .alumni-card p {
+            font-size: 15px; /* Slightly larger text */
+            color: #555;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .alumni-card .graduation-year {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2a5298;
+            margin-top: 10px;
+            background: rgba(42, 82, 152, 0.1); /* Highlighted background */
+            padding: 5px 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .footer-quick-links {
+            flex: 1;
+            max-width: 300px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-quick-links .widget-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .footer-quick-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-quick-links ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-quick-links ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease, text-decoration 0.3s ease;
+        }
+
+        .footer-quick-links ul li a:hover {
+            color: #a2d9ff;
+            text-decoration: underline;
+        }
+        /* Sub-container styles for Notice and Event sections */
+        .sub_container {
+            max-height: 280px; /* Limit the height */
+            overflow: hidden; /* Hide the scrollbar */
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1); /* Subtle background */
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .sub_container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            animation: scroll-content 10s linear infinite; /* Continuous scrolling */
+        }
+
+        .sub_container ul:hover {
+            animation-play-state: paused; /* Pause scrolling on hover */
+        }
+
+        .sub_container ul:empty {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%; /* Center the message vertically */
+        }
+
+        .sub_container ul:empty::before {
+            content: "No content available.";
+            font-size: 18px;
+            color: #555;
+            font-style: italic;
+        }
+
+        @keyframes scroll-content {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+
+        .sub_container ul li {
+            margin-bottom: 10px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            min-height: 80px; /* Ensure consistent size */
+        }
+
+        .sub_container ul li:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Contact Us Section Styles */
+        #footer-sidebar2 {
+            background-color: rgba(255, 255, 255, 0.2); /* Subtle background */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+            max-width: 300px;
+        }
+
+        #footer-sidebar2 .widget-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        #footer-sidebar2 .textwidget p {
+            margin: 10px 0;
+            color: #ecf0f1; /* Light text color */
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        #footer-sidebar2 .textwidget p i {
+            color: #f39c12; /* Icon color */
+            margin-right: 8px;
+        }
+
+        #footer-sidebar2 .textwidget p.name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #f1c40f; /* Highlighted text color */
+        }
+
+        /* Footer Heading Styles */
+        .footer-heading {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .footer-heading h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #f1c40f; /* Highlighted text color */
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .event-board {
+            flex: 0 0 25%; /* Adjusted width for larger screens */
+            margin: 0; /* Remove extra margin */
+            padding: 20px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: #ecf0f1;
+            border-radius: 15px;
+            max-height: 400px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .event-board h2 {
+            font-size: 28px; /* Adjusted font size */
+            margin-bottom: 15px;
+            color: #ecf0f1;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background-color: #2980b9;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .event-board ul {
+            height: 300px; /* Adjusted height */
+        }
+        @media (max-width: 1024px) {
+            .event-board {
+                flex: 0 0 90%; /* Full width for smaller screens */
+                margin: 15px auto; /* Center align */
+            }
+        }
+        .gallery-section {
+            padding: 10px 20px; /* Balanced padding */
+            text-align: center;
+            color: #ffffff; /* White text for contrast */
+            border-radius: 10px; /* Rounded corners */
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+            overflow: hidden;
+            width: 100%; /* Full width */
+        }
+        .gallery-section h1 {
+            font-size: 36px; /* Larger font size */
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 15px; /* Balanced margin */
+            letter-spacing: 2px; /* Enhanced spacing */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Stronger shadow */
+            color: #f1c40f; /* Highlighted text color */
+        }
+        .gallery-section h2 {
+            font-size: 28px; /* Slightly smaller font size */
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px; /* Balanced margin */
+            letter-spacing: 1.5px; /* Adjusted spacing */
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+            background-color: rgba(0, 0, 0, 0.6); /* Subtle background color */
+            padding: 10px; /* Balanced padding */
+            border-radius: 8px; /* Rounded corners */
+            color: #ffffff; /* White text */
+        }
+
+        .gallery-carousel {
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 320px; /* Balanced height */
+        }
+
+        .gallery-track {
+            display: flex;
+            gap: 15px; /* Balanced gap */
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .gallery-card {
+            background: linear-gradient(135deg, #ffffff, #f9f9f9); /* Subtle gradient */
+            color: #333333; /* Dark text for readability */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+            padding: 15px; /* Balanced padding */
+            text-align: center;
+            width: 300px; /* Balanced width */
+            flex-shrink: 0;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-10px) scale(1.05); /* Enhanced hover effect */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .gallery-photo {
+            width: 100%;
+            height: 200px; /* Balanced height */
+            object-fit: cover;
+            border-radius: 10px; /* Rounded corners */
+            margin-bottom: 10px; /* Balanced margin */
+        }
+
+        .gallery-title {
+            font-size: 18px; /* Balanced font size */
+            font-weight: bold;
+            color: #1e3c72; /* Professional blue */
+            margin-bottom: 8px; /* Balanced margin */
+            text-transform: uppercase;
+        }
+
+        .gallery-description {
+            font-size: 14px; /* Balanced font size */
+            color: #555555; /* Subtle gray */
+        }
+
+        .gallery-scroll-left, .gallery-scroll-right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6); /* Subtle background */
+            color: #ffffff; /* White text */
+            border: none;
+            border-radius: 50%;
+            width: 40px; /* Balanced size */
+            height: 40px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .gallery-scroll-left {
+            left: 10px; /* Adjusted position */
+        }
+
+        .gallery-scroll-right {
+            right: 10px; /* Adjusted position */
+        }
+
+        .gallery-scroll-left:hover, .gallery-scroll-right:hover {
+            background: rgba(0, 0, 0, 0.8); /* Darker background on hover */
+        }
+        .view-more-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-view-more {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-view-more:hover {
+            background-color: #00b31e;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .logo h1 {
+            font-size: 40px;
+            font-weight: bold;
+            color: #f1c40f; /* Opposite to navbar's dark gradient */
+            text-transform: uppercase;
+            text-align: left;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Add depth */
+            margin: 10px 0;
+        }
+
+        .logo h1 .portal {
+            color: #ecf0f1; /* Light color for contrast */
+            font-style: italic;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        }
+
+        /* Smooth scrolling for the page */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Go to Top Button Styles */
+        .go-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #e9e627;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .go-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .go-to-top:hover {
+            background-color: #00b31e;
+            transform: scale(1.1);
+        }
+
+        /* Section animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            opacity: 0;
+            transform: translateX(-50px);
+            animation: slideIn 1s ease-in-out forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .zoom-in {
+            opacity: 0;
+            transform: scale(0.8);
+            animation: zoomIn 1s ease-in-out forwards;
+        }
+
+        @keyframes zoomIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Enhance section spacing */
+        .main-container, .top-alumni, .gallery-section {
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <span>DR. VITHALRAO VIKHE PATIL COLLEGE OF ENGINEERING, Ahilyanagar</span>
+                <h1>ALUMNI <br><span class="portal">PORTAL</span></h1>
+            </div>
+            <button class="navbar-toggle" onclick="toggleNavbar()">☰</button>
+            <nav class="navbar">
+                <ul>
+                    <li><a href="{% url 'alumni_login' %}"><i class="fas fa-user-graduate"></i> Alumni Login</a></li>
+                    <li><a href="{% url 'alumni_registration' %}"><i class="fas fa-user-plus"></i> Alumni Registration</a></li>
+                    <li><a href="{% url 'alumni_coordinator_login' %}"><i class="fas fa-sign-in-alt"></i> Coordinator Login</a></li>
+                    <li><a href="{% url 'batch_mentor_login' %}"><i class="fas fa-user-tie"></i> Mentor Login</a></li>
+                    <li><a href="{% url 'gallery' %}"><i class="fas fa-images"></i> Gallery</a></li>
+                    <li><a href="{% url 'about_us' %}"><i class="fas fa-info-circle"></i> About Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <script>
+        function toggleNavbar() {
+            const navbarContainer = document.querySelector('.navbar-container');
+            const navbar = document.querySelector('.navbar ul');
+            const toggleButton = document.querySelector('.navbar-toggle');
+            navbar.classList.toggle('active');
+            navbarContainer.classList.toggle('expanded');
+            toggleButton.textContent = navbar.classList.contains('active') ? '✖' : '☰';
+        }
+        function handleResize() {
+            const navbar = document.querySelector('.navbar ul');
+            const navbarContainer = document.querySelector('.navbar-container');
+            if (window.innerWidth >= 1280) {
+                navbar.classList.remove('active');
+                navbarContainer.classList.remove('expanded');
+            }
+        }
+        window.addEventListener('resize', handleResize);
+        document.addEventListener('DOMContentLoaded', handleResize);
+    </script>
+
+    <!-- Full Background Image -->
+    <div class="background-image"></div>
+
+    <main>
+        <!-- Main Container -->
+        <section class="main-container">
+            <!-- Event Board Section -->
+            <div class="event-board">
+                <h2><i class="fas fa-calendar-alt"></i> Event Board</h2>
+                <div class="sub_container">
+                    <ul>
+                        {% for event in events %}
+                        <li>
+                            <h4>
+                                <a href="{% if event.media %}{% url 'download_event_media' event.id %}{% else %}#{% endif %}" class="event-title">
+                                    <i class="fas fa-calendar-check"></i> {{ event.title }}
+                                </a>
+                            </h4>
+                            <small class="date"><i class="fas fa-clock"></i> Date: {{ event.date|date:"d-m-Y" }}</small><br>
+                            <p><i class="fas fa-info-circle"></i> {{ event.description }}</p>
+                            <small><i class="fas fa-clock"></i> Posted on: {{ event.created_at|timezone:"Asia/Kolkata"|date:"d-m-Y, h:i A" }}</small>
+                        </li>
+                        {% empty %}
+                        <p>No events available.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Alumni Section -->
+        <section class="top-alumni">
+            <h2><i class="fas fa-star"></i> Estimated Alumni <i class="fas fa-star"></i></h2>
+            <div class="alumni-carousel">
+                <div class="alumni-track">
+                    {% for alumni in top_alumni %}
+                    <div class="alumni-card">
+                        <img src="{{ alumni.profile_photo.url }}" alt="Profile Photo" class="alumni-photo">
+                        <h4>{{ alumni.full_name }}</h4>
+                        <p><strong>Job Profile:</strong> {{ alumni.current_job_profile }}</p>
+                        <p><strong>Company:</strong> {{ alumni.current_company }}</p>
+                        {% if alumni.description %}
+                            <p>{{ alumni.description }}</p>
+                        {% endif %}
+                        <p class="graduation-year"><strong>Graduation Year:</strong> {{ alumni.graduation_year }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="gallery-section">
+            <h2><i class="fas fa-images"></i> Gallery</h2>
+            <div class="gallery-carousel">
+                <div class="gallery-track">
+                    {% for photo in photos|slice:":10" %}
+                    <div class="gallery-card">
+                        <img src="{{ photo.image.url }}" alt="{{ photo.title }}" class="gallery-photo">
+                        <p class="gallery-title">{{ photo.title }}</p>
+                        <p class="gallery-description">{{ photo.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button class="gallery-scroll-left" onclick="scrollGalleryLeft()">&#8249;</button>
+            <button class="gallery-scroll-right" onclick="scrollGalleryRight()">&#8250;</button>
+            <div class="view-more-container">
+                <a href="{% url 'gallery' %}" class="btn-view-more">
+                    View More
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Go to Top Button -->
+    <button class="go-to-top" id="goToTop" onclick="scrollToTop()">↑</button>
+
+    <footer>
+        <div class="footer-heading">
+            <aside class="widget widget_text"></aside>
+            <h1>The Department of<br> Electronics and Telecommunication<br>
+                Dr. Vithalrao Vikhe Patil <br> College of Engineering.</h1>
+            </aside>
+        </div>
+        <div class="footer-left">
+            <p>&copy; Alumni Portal. All rights reserved.</p>
+            <p id="current-datetime"><i class="fas fa-clock"></i> Date & Time: <span></span></p>
+            <div>
+                <p id="visitor-count"><i class="fas fa-users"></i> Visitors: <span>{{ visitor_count }}</span></p>
+            </div>
+        </div>
+        <div id="footer-sidebar3" class="footer-right">
+            <aside id="text-11" class="widget widget_text">
+                <h3 class="widget-title"><i class="fas fa-map-marker-alt"></i> Campus Location</h3>
+                <div class="textwidget">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d966228.4695311349!2d74.38937776309645!3d18.916783731568234!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bdcbbe061fe9e81%3A0x1972733fbb666d7e!2sPadmashri+Dr.+Vithalrao+Vikhe+Patil+College+Of+Engineering!5e0!3m2!1sen!2sin!4v1438259175305"
+                        title="Campus Location Map" allowfullscreen=""></iframe>
+                </div>
+            </aside>
+        </div>
+        <div id="footer-sidebar2" class="footer-contact">
+            <aside class="widget widget_text">
+                <h3 class="widget-title"><i class="fas fa-phone-alt"></i> Contact Us</h3>
+                <div class="textwidget">
+                    <p class="name">Dr. Vithalrao Vikhe Patil College of Engineering</p>
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i> ViladGhat, Vilad Ghat, PO M.I.D.C,Ahilyanagar-414111
+                    </p>
+                    <p>
+                        <i class="fas fa-phone"></i> Tel: 0241-2777296, 2779496<br>
+                        Mob: 9356164515<br>
+                        Fax: 0241-2777533
+                    </p>
+                    <p>
+                        <i class="fas fa-envelope"></i> Email: prin_coea@yahoo.com
+                    </p>
+                </div>
+            </aside>
+        </div>
+        <div class="footer-quick-links">
+            <h3 class="widget-title"><i class="fas fa-link"></i> Quick Links</h3>
+            <ul>
+                <li><i class="fas fa-university"></i> <a href="https://enggnagar.com" target="_blank" rel="noopener">Dr. Vithalrao Vikhe Patil College of Engineering</a></li>
+                <li><i class="fas fa-graduation-cap"></i> <a href="http://www.unipune.ac.in" target="_blank" rel="noopener">Savitribai Phule Pune University (Pune University)</a></li>
+                <li><i class="fas fa-cogs"></i> <a href="https://www.aicte-india.org" target="_blank" rel="noopener">AICTE</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        // Show "Go to Top" button on scroll
+        const goToTopButton = document.getElementById('goToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                goToTopButton.classList.add('show');
+            } else {
+                goToTopButton.classList.remove('show');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Add animations to sections
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.main-container, .top-alumni, .gallery-section');
+            sections.forEach((section, index) => {
+                section.classList.add(index % 2 === 0 ? 'fade-in' : 'slide-in');
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const galleryTrack = document.querySelector('.gallery-track');
+            const galleryCards = Array.from(document.querySelectorAll('.gallery-card'));
+            const galleryCardWidth = galleryCards[0]?.offsetWidth + 20 || 0;
+            let isGalleryTransitioning = false;
+
+            function moveGalleryCardToEnd() {
+                const firstCard = galleryCards.shift();
+                galleryTrack.appendChild(firstCard);
+                galleryCards.push(firstCard);
+                galleryTrack.style.transition = 'none';
+                galleryTrack.style.transform = `translateX(0)`;
+                setTimeout(() => {
+                    galleryTrack.style.transition = 'transform 0.5s ease-in-out';
+                    isGalleryTransitioning = false;
+                }, 50);
+            }
+
+            function scrollGalleryCards() {
+                if (isGalleryTransitioning) return;
+                isGalleryTransitioning = true;
+                galleryTrack.style.transform = `translateX(-${galleryCardWidth}px)`;
+                setTimeout(moveGalleryCardToEnd, 300);
+            }
+
+            setInterval(scrollGalleryCards, 2000);
+        });
+
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.querySelector('#current-datetime span').textContent = now.toLocaleString('en-US', options);
+        }
+        setInterval(updateDateTime, 1000);
+
+        // Fetch visitor count from the server
+        function fetchVisitorCount() {
+            fetch('/api/visitor_count/')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('#visitor-count span').textContent = data.visitor_count;
+                })
+                .catch(error => console.error('Error fetching visitor count:', error));
+        }
+        fetchVisitorCount();
+
+        // Top Alumni carousel continuous scroll
+        document.addEventListener("DOMContentLoaded", function () {
+            const track = document.querySelector('.alumni-track');
+            const cards = Array.from(document.querySelectorAll('.alumni-card'));
+            const cardWidth = cards[0]?.offsetWidth + 20 || 0;
+            let isTransitioning = false;
+
+            function moveCardToEnd() {
+                const firstCard = cards.shift();
+                track.appendChild(firstCard);
+                cards.push(firstCard);
+                track.style.transition = 'none';
+                track.style.transform = `translateX(0)`;
+                setTimeout(() => {
+                    track.style.transition = 'transform 0.5s ease-in-out';
+                    isTransitioning = false;
+                }, 50);
+            }
+
+            function scrollCards() {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                track.style.transform = `translateX(-${cardWidth}px)`;
+                setTimeout(moveCardToEnd, 500);
+            }
+
+            setInterval(scrollCards, 2000);
+        });
+
+        // Gallery manual scroll
+        const galleryTrack = document.querySelector('.gallery-track');
+        const galleryCards = document.querySelectorAll('.gallery-card');
+        const galleryCardWidth = galleryCards[0]?.offsetWidth + 20 || 0;
+        let galleryIndex = 0;
+
+        function scrollGalleryLeft() {
+            if (galleryIndex > 0) {
+                galleryIndex--;
+                galleryTrack.style.transform = `translateX(-${galleryIndex * galleryCardWidth}px)`;
+            }
+        }
+
+        function scrollGalleryRight() {
+            if (galleryIndex < galleryCards.length - 5) {
+                galleryIndex++;
+                galleryTrack.style.transform = `translateX(-${galleryIndex * galleryCardWidth}px)`;
+            }
+        }
+
+        // Notices and events continuous scroll
+        document.addEventListener("DOMContentLoaded", function () {
+            const subContainers = document.querySelectorAll(".sub_container ul");
+            subContainers.forEach((container) => {
+                container.addEventListener("animationiteration", () => {
+                    const firstItem = container.children[0];
+                    container.appendChild(firstItem);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
