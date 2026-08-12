@@ -2,6 +2,7 @@ services:
   - type: web
     name: campusbridge-backend
     env: node
+    plan: free
     rootDir: CampusBridge/backend
     buildCommand: npm install
     startCommand: node server.js
