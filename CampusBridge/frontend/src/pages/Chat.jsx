@@ -89,10 +89,6 @@ const Chat = () => {
         c.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const getMeetingRoom = () => {
-        const sortedIds = [user._id, selectedUser._id].sort();
-        return `call-${sortedIds[0]}-${sortedIds[1]}`;
-    };
 
     return (
         <div className="flex h-[calc(100vh-8rem)] gap-0 md:gap-6 text-slate-800 animate-fade-in">
@@ -159,14 +155,7 @@ const Chat = () => {
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex gap-2">
-                                <a href={`/call/${getMeetingRoom()}`} className="btn-secondary p-2.5 rounded-xl cursor-pointer" title="Start Video Call">
-                                    <HiOutlineVideoCamera className="w-4 h-4 text-primary" />
-                                </a>
-                                <a href={`/call/${getMeetingRoom()}?audioOnly=true`} className="btn-secondary p-2.5 rounded-xl cursor-pointer" title="Start Audio Call">
-                                    <HiOutlinePhone className="w-4 h-4 text-slate-500" />
-                                </a>
-                            </div>
+
                         </div>
 
                         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
