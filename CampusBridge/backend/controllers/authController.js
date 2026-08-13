@@ -28,7 +28,12 @@ const sendVerificationOtp = async (req, res) => {
 
         if (!emailSent) return res.status(500).json({ message: 'Failed to send OTP email. Please modify .env with email credentials.' });
 
-        res.status(200).json({ message: 'OTP sent successfully' });
+        const isMock = process.env.MOCK_EMAIL === 'true' || !process.env.EMAIL_USER || !process.env.EMAIL_PASS;
+        const successMessage = isMock 
+            ? `OTP sent successfully! (MOCK MODE OTP: ${otp})` 
+            : 'OTP sent successfully';
+
+        res.status(200).json({ message: successMessage });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -130,7 +135,12 @@ const forgotPassword = async (req, res) => {
 
         if (!emailSent) return res.status(500).json({ message: 'Failed to send OTP email.' });
 
-        res.status(200).json({ message: 'Password reset OTP sent to email' });
+        const isMock = process.env.MOCK_EMAIL === 'true' || !process.env.EMAIL_USER || !process.env.EMAIL_PASS;
+        const successMessage = isMock 
+            ? `Password reset OTP sent! (MOCK MODE OTP: ${otp})` 
+            : 'Password reset OTP sent to email';
+
+        res.status(200).json({ message: successMessage });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
