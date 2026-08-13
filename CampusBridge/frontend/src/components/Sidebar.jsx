@@ -8,7 +8,7 @@ import {
     HiOutlineChartBar
 } from 'react-icons/hi2';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -46,57 +46,68 @@ const Sidebar = () => {
     }
 
     return (
-        <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col z-50 shadow-sm">
-            {/* Logo */}
-            <div className="p-6 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
-                        <span className="text-white font-bold text-lg">C</span>
-                    </div>
-                    <div>
-                        <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2" title={user?.collegeName || 'CampusBridge'}>
-                            {user?.role === 'Admin' ? 'CampusBridge Admin' : (user?.collegeName || 'CampusBridge')}
-                        </h1>
-                        <p className="text-[10px] text-slate-400 font-medium tracking-wide uppercase mt-0.5">
-                            {user?.role === 'Admin' ? 'Platform Control' : 'CampusBridge Network'}
-                        </p>
+        <>
+            {/* Mobile overlay */}
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            <aside className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col z-50 shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+                {/* Logo */}
+                <div className="p-6 border-b border-slate-100">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
+                            <span className="text-white font-bold text-lg">C</span>
+                        </div>
+                        <div>
+                            <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2" title={user?.collegeName || 'CampusBridge'}>
+                                {user?.role === 'Admin' ? 'CampusBridge Admin' : (user?.collegeName || 'CampusBridge')}
+                            </h1>
+                            <p className="text-[10px] text-slate-400 font-medium tracking-wide uppercase mt-0.5">
+                                {user?.role === 'Admin' ? 'Platform Control' : 'CampusBridge Network'}
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Nav */}
-            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                {links.map(({ to, icon: Icon, label }) => (
-                    <NavLink
-                        key={to}
-                        to={to}
-                        className={({ isActive }) =>
-                            isActive ? 'sidebar-link-active' : 'sidebar-link'
-                        }
-                    >
-                        <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                        <span className="text-sm font-medium">{label}</span>
-                    </NavLink>
-                ))}
-            </nav>
+                {/* Nav */}
+                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                    {links.map(({ to, icon: Icon, label }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            onClick={() => setIsOpen(false)}
+                            className={({ isActive }) =>
+                                isActive ? 'sidebar-link-active' : 'sidebar-link'
+                            }
+                        >
+                            <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                            <span className="text-sm font-medium">{label}</span>
+                        </NavLink>
+                    ))}
+                </nav>
 
-            {/* User section */}
-            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-                <div className="flex items-center gap-3 mb-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/10">
-                        {user?.name?.charAt(0) || 'U'}
+                {/* User section */}
+                <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+                    <div className="flex items-center gap-3 mb-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/10">
+                            {user?.name?.charAt(0) || 'U'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-slate-900 truncate">{user?.name}</p>
+                            <p className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wider">{user?.role}</p>
+                        </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-slate-900 truncate">{user?.name}</p>
-                        <p className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wider">{user?.role}</p>
-                    </div>
+                    <button onClick={handleLogout} className="sidebar-link w-full text-red-500 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 cursor-pointer">
+                        <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
+                        <span className="text-sm font-medium">Logout</span>
+                    </button>
                 </div>
-                <button onClick={handleLogout} className="sidebar-link w-full text-red-500 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 cursor-pointer">
-                    <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-                    <span className="text-sm font-medium">Logout</span>
-                </button>
-            </div>
-        </aside>
+            </aside>
+        </>
     );
 };
 
