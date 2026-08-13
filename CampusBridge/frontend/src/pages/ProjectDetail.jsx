@@ -19,6 +19,13 @@ const ProjectDetail = () => {
     const [loading, setLoading] = useState(true);
     const [analyzing, setAnalyzing] = useState(false);
     
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseUrl = import.meta.env.VITE_API_URL || '';
+        return `${baseUrl}/${path.replace(/^\\//, '')}`;
+    };
+
     const [activeTab, setActiveTab] = useState('overview'); // overview, technical, community
 
     useEffect(() => {
@@ -182,7 +189,7 @@ const ProjectDetail = () => {
                             <div className="space-y-8 animate-fadeIn">
                                 {project.screenshots && project.screenshots.length > 0 && (
                                     <div className="rounded-xl overflow-hidden border border-slate-200">
-                                        <img src={`/${project.screenshots[0]}`} className="w-full h-auto" alt="Project Screenshot" />
+                                        <img src={getImageUrl(project.screenshots[0])} className="w-full h-auto" alt="Project Screenshot" />
                                     </div>
                                 )}
                                 
@@ -270,7 +277,7 @@ const ProjectDetail = () => {
                                                 <div key={fb._id} className="bg-slate-50 p-5 rounded-xl border border-slate-200">
                                                     <div className="flex items-center space-x-3 mb-3">
                                                         <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden">
-                                                            {fb.alumniId?.profilePhoto && <img src={`/${fb.alumniId.profilePhoto}`} className="w-full h-full object-cover" alt="" />}
+                                                            {fb.alumniId?.profilePhoto && <img src={getImageUrl(fb.alumniId.profilePhoto)} className="w-full h-full object-cover" alt="" />}
                                                         </div>
                                                         <div>
                                                             <h4 className="font-bold text-slate-900">{fb.alumniId?.name}</h4>
@@ -357,7 +364,7 @@ const ProjectDetail = () => {
                         <div className="flex items-center space-x-3 mb-4">
                             <div className="w-12 h-12 rounded-full bg-slate-200 overflow-hidden">
                                 {project.ownerId?.profilePhoto ? (
-                                    <img src={`/${project.ownerId.profilePhoto}`} className="w-full h-full object-cover" alt="" />
+                                    <img src={getImageUrl(project.ownerId.profilePhoto)} className="w-full h-full object-cover" alt="" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center font-bold text-slate-500">{project.ownerId?.name?.charAt(0)}</div>
                                 )}

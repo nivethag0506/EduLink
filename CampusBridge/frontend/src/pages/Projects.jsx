@@ -12,6 +12,14 @@ const Projects = () => {
     const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseUrl = import.meta.env.VITE_API_URL || '';
+        return `${baseUrl}/${path.replace(/^\\//, '')}`;
+    };
+
     
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -115,7 +123,7 @@ const Projects = () => {
                             {/* Thumbnail */}
                             <div className="h-40 bg-slate-100 border-b border-slate-100 overflow-hidden relative">
                                 {project.screenshots && project.screenshots.length > 0 ? (
-                                    <img src={`/${project.screenshots[0]}`} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <img src={getImageUrl(project.screenshots[0])} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-slate-300">
                                         <HiOutlineGlobeAlt className="w-12 h-12 opacity-50" />
@@ -151,7 +159,7 @@ const Projects = () => {
                                     <div className="flex items-center space-x-2">
                                         <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
                                             {project.ownerId?.profilePhoto ? (
-                                                <img src={`/${project.ownerId.profilePhoto}`} className="w-full h-full object-cover" alt="Author" />
+                                                <img src={getImageUrl(project.ownerId.profilePhoto)} className="w-full h-full object-cover" alt="Author" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center font-bold text-[10px] text-slate-500">{project.ownerId?.name?.charAt(0)}</div>
                                             )}
