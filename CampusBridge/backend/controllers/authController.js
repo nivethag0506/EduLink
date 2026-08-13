@@ -44,11 +44,10 @@ const registerUser = async (req, res) => {
     try {
         const { name, email, password, role, collegeId, branch, year, graduationYear, otp } = req.body;
 
-        // OTP is bypassed for demo presentation
-        // if (!otp) return res.status(400).json({ message: 'OTP is required' });
+        if (!otp) return res.status(400).json({ message: 'OTP is required' });
 
-        // const validOtp = await Otp.findOne({ email, otp });
-        // if (!validOtp) return res.status(400).json({ message: 'Invalid or expired OTP' });
+        const validOtp = await Otp.findOne({ email, otp });
+        if (!validOtp) return res.status(400).json({ message: 'Invalid or expired OTP' });
 
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });

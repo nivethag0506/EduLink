@@ -5,8 +5,10 @@ import API from '../api/axios';
 import toast from 'react-hot-toast';
 
 const Signup = () => {
-    const [form, setForm] = useState({ name: '', email: '', password: '', role: 'Student', collegeId: '', branch: '', year: '', graduationYear: '' });
+    const [form, setForm] = useState({ name: '', email: '', password: '', role: 'Student', collegeId: '', branch: '', year: '', graduationYear: '', otp: '' });
     const [idCardFile, setIdCardFile] = useState(null);
+    const [otpSent, setOtpSent] = useState(false);
+    const [sendingOtp, setSendingOtp] = useState(false);
     const [colleges, setColleges] = useState([]);
     const { register, loading } = useAuth();
     const navigate = useNavigate();
@@ -17,6 +19,20 @@ const Signup = () => {
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+    const handleSendOtp = async () => {
+        if (!form.email) return toast.error('Please enter your email first');
+        setSendingOtp(true);
+        try {
+            await API.post('/auth/send-otp', { email: form.email });
+            setOtpSent(true);
+            toast.success('OTP sent! Check your inbox (or backend logs if running locally)');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to send OTP');
+        } finally {
+            setSendingOtp(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!idCardFile) return toast.error('Please upload your college ID card');
@@ -24,7 +40,7 @@ const Signup = () => {
         const formData = new FormData();
         Object.entries(form).forEach(([k, v]) => { if (v) formData.append(k, v); });
         formData.append('idCardImage', idCardFile);
-        formData.append('otp', '123456'); // Bypass OTP check
+        if (!form.otp) return toast.error('Please enter the OTP sent to your email');
         try {
             await register(formData);
             toast.success('Account created successfully! Please wait for admin verification.');
@@ -58,8 +74,21 @@ const Signup = () => {
                         </div>
                         <div className="col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email Address</label>
-                            <input name="email" type="email" value={form.email} onChange={handleChange} className="input-field bg-slate-50" required />
+                            <div className="flex gap-2">
+                                <input name="email" type="email" value={form.email} onChange={handleChange} className="input-field bg-slate-50 flex-1" required disabled={otpSent} />
+                                {!otpSent && (
+                                    <button type="button" onClick={handleSendOtp} disabled={sendingOtp} className="btn-secondary px-4 py-2 text-xs font-semibold shrink-0 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                                        {sendingOtp ? 'Sending...' : 'Verify'}
+                                    </button>
+                                )}
+                            </div>
                         </div>
+                        {otpSent && (
+                            <div className="col-span-2">
+                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5 text-primary">Verification OTP</label>
+                                <input name="otp" type="text" value={form.otp} onChange={handleChange} className="input-field bg-indigo-50 border-indigo-200" placeholder="Enter 6-digit OTP" required />
+                            </div>
+                        )}
                         <div className="col-span-2">
                             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
                             <input name="password" type="password" value={form.password} onChange={handleChange} className="input-field bg-slate-50" required />
