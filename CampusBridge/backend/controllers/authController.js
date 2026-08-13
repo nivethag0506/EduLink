@@ -23,7 +23,19 @@ const sendVerificationOtp = async (req, res) => {
         const emailSent = await sendEmail({
             email,
             subject: 'CampusBridge - Account Verification OTP',
-            message: `Your verification OTP is: ${otp}. It will expire in 5 minutes.`
+            message: `Your verification OTP is: ${otp}. It will expire in 5 minutes.`,
+            html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <p>Hi there,</p>
+                <p>Someone (probably you) has requested to create an account on <strong>CampusBridge</strong>.</p>
+                <p>To confirm this and verify your email address, please use the following OTP:</p>
+                <h2 style="color: #6366F1; letter-spacing: 4px; padding: 10px; background: #F3F4F6; display: inline-block; border-radius: 8px;">${otp}</h2>
+                <p>If you did not request this, you can safely ignore this email.</p>
+                <br>
+                <p>If you need help, please contact the site administrator.</p>
+                <p><strong>CampusBridge Team</strong></p>
+            </div>
+            `
         });
 
         if (!emailSent) return res.status(500).json({ message: 'Failed to send OTP email. Please modify .env with email credentials.' });
@@ -130,7 +142,19 @@ const forgotPassword = async (req, res) => {
         const emailSent = await sendEmail({
             email,
             subject: 'CampusBridge - Password Reset OTP',
-            message: `Your password reset OTP is: ${otp}. It will expire in 5 minutes.`
+            message: `Your password reset OTP is: ${otp}. It will expire in 5 minutes.`,
+            html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <p>Hi there,</p>
+                <p>Someone (probably you) has requested a new password for your account on <strong>CampusBridge</strong>.</p>
+                <p>To confirm this and reset your password, please use the following OTP:</p>
+                <h2 style="color: #6366F1; letter-spacing: 4px; padding: 10px; background: #F3F4F6; display: inline-block; border-radius: 8px;">${otp}</h2>
+                <p>If you did not request this, you can safely ignore this email.</p>
+                <br>
+                <p>If you need help, please contact the site administrator.</p>
+                <p><strong>CampusBridge Team</strong></p>
+            </div>
+            `
         });
 
         if (!emailSent) return res.status(500).json({ message: 'Failed to send OTP email.' });
