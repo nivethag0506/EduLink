@@ -29,22 +29,23 @@ exports.createProject = async (req, res) => {
             slug = `${slug}-${Date.now().toString().slice(-4)}`;
         }
 
+        // Parse JSON strings from FormData if they exist
+        let parsedBody = { ...req.body };
+        if (typeof parsedBody.technologies === 'string') parsedBody.technologies = JSON.parse(parsedBody.technologies);
+        if (typeof parsedBody.skills === 'string') parsedBody.skills = JSON.parse(parsedBody.skills);
+        if (typeof parsedBody.features === 'string') parsedBody.features = JSON.parse(parsedBody.features);
+        if (typeof parsedBody.architectureDetails === 'string') parsedBody.architectureDetails = JSON.parse(parsedBody.architectureDetails);
+        if (typeof parsedBody.teamMembers === 'string') parsedBody.teamMembers = JSON.parse(parsedBody.teamMembers);
+        if (typeof parsedBody.collaborationSettings === 'string') parsedBody.collaborationSettings = JSON.parse(parsedBody.collaborationSettings);
+
         const project = new Project({
-            ...req.body,
+            ...parsedBody,
             slug,
             ownerId: req.user._id,
             collegeId: req.user.collegeId,
-            status: req.body.status || 'In Development',
-            visibility: req.body.visibility || 'Public'
+            status: parsedBody.status || 'In Development',
+            visibility: parsedBody.visibility || 'Public'
         });
-
-        // Parse JSON strings from FormData if they exist
-        if (typeof req.body.technologies === 'string') project.technologies = JSON.parse(req.body.technologies);
-        if (typeof req.body.skills === 'string') project.skills = JSON.parse(req.body.skills);
-        if (typeof req.body.features === 'string') project.features = JSON.parse(req.body.features);
-        if (typeof req.body.architectureDetails === 'string') project.architectureDetails = JSON.parse(req.body.architectureDetails);
-        if (typeof req.body.teamMembers === 'string') project.teamMembers = JSON.parse(req.body.teamMembers);
-        if (typeof req.body.collaborationSettings === 'string') project.collaborationSettings = JSON.parse(req.body.collaborationSettings);
 
         // Handle uploaded files
         if (req.files) {
