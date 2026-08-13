@@ -119,23 +119,23 @@ const Feed = () => {
                         placeholder="Share something with your college..."
                     />
                 </div>
-                <div className="flex items-center justify-between border-t border-slate-100 pt-3">
-                    <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-slate-100 pt-3 gap-3">
+                    <div className="flex items-center gap-2 flex-wrap">
                         <select value={postType} onChange={(e) => setPostType(e.target.value)} className="input-field text-xs py-2 w-auto bg-slate-50 cursor-pointer">
                             {POST_TYPES.filter(t => t !== 'All').map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
-                        <label className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 cursor-pointer text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
+                        <label className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 cursor-pointer text-xs font-semibold py-1.5 px-2 rounded-lg hover:bg-slate-100 transition-colors">
                             <HiOutlinePhoto className="w-4 h-4 text-secondary" />
                             <input type="file" accept="image/*" multiple onChange={(e) => setMediaFiles(e.target.files)} className="hidden" />
-                            Photo
+                            <span className="hidden sm:inline">Photo</span>
                         </label>
-                        <label className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 cursor-pointer text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
+                        <label className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 cursor-pointer text-xs font-semibold py-1.5 px-2 rounded-lg hover:bg-slate-100 transition-colors">
                             <HiOutlinePaperClip className="w-4 h-4 text-accent" />
                             <input type="file" accept=".pdf" onChange={(e) => setPdfFile(e.target.files[0])} className="hidden" />
-                            PDF
+                            <span className="hidden sm:inline">PDF</span>
                         </label>
                     </div>
-                    <button type="submit" className="btn-primary text-xs py-2 px-5 cursor-pointer">Post</button>
+                    <button type="submit" className="btn-primary text-xs py-2 px-5 cursor-pointer w-full sm:w-auto">Post</button>
                 </div>
             </form>
 
