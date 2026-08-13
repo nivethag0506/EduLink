@@ -17,6 +17,14 @@ const Mentoring = () => {
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState('all');
 
+    // Modal states
+    const [acceptModalId, setAcceptModalId] = useState(null);
+    const [acceptDate, setAcceptDate] = useState('');
+    const [acceptTime, setAcceptTime] = useState('');
+
+    const [rejectModalId, setRejectModalId] = useState(null);
+    const [rejectReason, setRejectReason] = useState('');
+
     const isMentor = ['Senior', 'Alumni'].includes(user?.role);
 
     const fetchRequests = async () => {
@@ -32,24 +40,33 @@ const Mentoring = () => {
 
     useEffect(() => { fetchRequests(); }, []);
 
-    const handleAccept = async (reqId) => {
-        const date = prompt('Enter session date (YYYY-MM-DD):');
-        if (!date) return;
-        const time = prompt('Enter session time (e.g. 5:00 PM):');
-        if (!time) return;
+    const openAcceptModal = (reqId) => {
+        setAcceptDate('');
+        setAcceptTime('');
+        setAcceptModalId(reqId);
+    };
+
+    const submitAccept = async () => {
+        if (!acceptDate || !acceptTime) return toast.error('Please enter both date and time');
         try {
-            await API.put(`/mentoring/${reqId}/accept`, { scheduledDate: date, scheduledTime: time });
+            await API.put(`/mentoring/${acceptModalId}/accept`, { scheduledDate: acceptDate, scheduledTime: acceptTime });
             toast.success('Session scheduled! Meeting link generated.');
+            setAcceptModalId(null);
             fetchRequests();
         } catch (err) { toast.error(err.response?.data?.message || 'Failed'); }
     };
 
-    const handleReject = async (reqId) => {
-        const reason = prompt('Enter reason for declining:');
-        if (!reason) return;
+    const openRejectModal = (reqId) => {
+        setRejectReason('');
+        setRejectModalId(reqId);
+    };
+
+    const submitReject = async () => {
+        if (!rejectReason.trim()) return toast.error('Please enter a reason');
         try {
-            await API.put(`/mentoring/${reqId}/reject`, { reason });
+            await API.put(`/mentoring/${rejectModalId}/reject`, { reason: rejectReason });
             toast.success('Session declined.');
+            setRejectModalId(null);
             fetchRequests();
         } catch (err) { toast.error('Failed to decline'); }
     };
@@ -198,12 +215,12 @@ const Mentoring = () => {
                             {/* Mentor actions for pending */}
                             {r.status === 'pending' && r.mentorId?._id === user?._id && (
                                 <div className="flex gap-3 pt-1">
-                                    <button onClick={() => handleAccept(r._id)}
+                                    <button onClick={() => openAcceptModal(r._id)}
                                         className="btn-primary text-xs py-2 px-5 flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 border-0 cursor-pointer"
                                         style={{ boxShadow: '0 4px 18px rgba(16, 185, 129, 0.2)' }}>
                                         <HiOutlineCheckCircle className="w-4 h-4" /> Accept & Schedule
                                     </button>
-                                    <button onClick={() => handleReject(r._id)}
+                                    <button onClick={() => openRejectModal(r._id)}
                                         className="btn-secondary text-xs py-2 px-5 flex items-center gap-2 border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 cursor-pointer bg-white">
                                         <HiOutlineXCircle className="w-4 h-4" /> Decline
                                     </button>
@@ -217,6 +234,65 @@ const Mentoring = () => {
                     );
                 })}
             </div>
+
+            {/* Accept Modal */}
+            {acceptModalId && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl">
+                        <h3 className="text-lg font-bold text-slate-900 mb-2">Schedule Session</h3>
+                        <p className="text-xs text-slate-500 mb-4">Set the date and time for this mentoring session. A private meeting link will be generated automatically.</p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1">Date</label>
+                                <input 
+                                    type="date" 
+                                    value={acceptDate} 
+                                    onChange={e => setAcceptDate(e.target.value)} 
+                                    className="input-field text-xs bg-slate-50 w-full" 
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1">Time</label>
+                                <input 
+                                    type="time" 
+                                    value={acceptTime} 
+                                    onChange={e => setAcceptTime(e.target.value)} 
+                                    className="input-field text-xs bg-slate-50 w-full" 
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6 justify-end">
+                            <button onClick={() => setAcceptModalId(null)} className="btn-secondary text-xs py-2 px-4 cursor-pointer">Cancel</button>
+                            <button onClick={submitAccept} className="btn-primary text-xs py-2 px-4 bg-emerald-500 hover:bg-emerald-600 border-none cursor-pointer">Schedule</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Reject Modal */}
+            {rejectModalId && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl">
+                        <h3 className="text-lg font-bold text-slate-900 mb-2">Decline Request</h3>
+                        <p className="text-xs text-slate-500 mb-4">Please provide a brief reason for declining this mentoring request.</p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1">Reason</label>
+                                <textarea 
+                                    value={rejectReason} 
+                                    onChange={e => setRejectReason(e.target.value)} 
+                                    className="input-field text-xs bg-slate-50 w-full min-h-[80px] resize-none" 
+                                    placeholder="e.g. Currently booked, topic out of scope..." 
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6 justify-end">
+                            <button onClick={() => setRejectModalId(null)} className="btn-secondary text-xs py-2 px-4 cursor-pointer">Cancel</button>
+                            <button onClick={submitReject} className="btn-primary text-xs py-2 px-4 bg-rose-500 hover:bg-rose-600 border-none cursor-pointer">Decline Session</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

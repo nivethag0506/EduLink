@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
@@ -7,6 +8,8 @@ import { HiOutlinePaperAirplane, HiOutlineVideoCamera, HiOutlinePhone, HiOutline
 const Chat = () => {
     const { user } = useAuth();
     const { socket, onlineUsers } = useSocket();
+    const [searchParams] = useSearchParams();
+    const initialUserId = searchParams.get('userId');
     const [conversations, setConversations] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -18,8 +21,15 @@ const Chat = () => {
 
     useEffect(() => {
         API.get('/chat').then(res => setConversations(res.data)).catch(() => { });
-        API.get('/users/college').then(res => setCollegeUsers(res.data.filter(u => u._id !== user._id))).catch(() => { });
-    }, []);
+        API.get('/users/college').then(res => {
+            const users = res.data.filter(u => u._id !== user._id);
+            setCollegeUsers(users);
+            if (initialUserId) {
+                const targetUser = users.find(u => u._id === initialUserId);
+                if (targetUser) setSelectedUser(targetUser);
+            }
+        }).catch(() => { });
+    }, [initialUserId, user._id]);
 
     useEffect(() => {
         if (selectedUser) {

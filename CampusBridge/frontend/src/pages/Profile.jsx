@@ -14,6 +14,9 @@ const Profile = () => {
     const [newSkill, setNewSkill] = useState('');
     const [newExp, setNewExp] = useState({ title: '', company: '', current: false, startDate: '' });
     const [showExpForm, setShowExpForm] = useState(false);
+    const [showMentoringModal, setShowMentoringModal] = useState(false);
+    const [mentoringTopic, setMentoringTopic] = useState('');
+    const [mentoringMessage, setMentoringMessage] = useState('');
     const isOwn = !id || id === user?._id;
 
     const fetchProfile = async () => {
@@ -75,6 +78,19 @@ const Profile = () => {
         }
     };
 
+    const handleMentoringRequest = async () => {
+        if (!mentoringTopic.trim() || !mentoringMessage.trim()) return toast.error('Please fill in all fields');
+        try {
+            await API.post('/mentoring', { mentorId: profile._id, topic: mentoringTopic, message: mentoringMessage });
+            toast.success('Session request sent to Mentor!');
+            setShowMentoringModal(false);
+            setMentoringTopic('');
+            setMentoringMessage('');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to request');
+        }
+    };
+
     if (!profile) return <div className="text-center py-12 text-slate-500">Loading profile...</div>;
 
     return (
@@ -130,7 +146,7 @@ const Profile = () => {
                         )}
                         {!isOwn && (
                             <div className="flex gap-2 pt-2 flex-wrap items-center justify-center md:justify-end">
-                                <a href={`/chat`} className="btn-primary text-xs py-2.5 px-4 flex items-center gap-2 cursor-pointer">
+                                <a href={`/chat?userId=${profile._id}`} className="btn-primary text-xs py-2.5 px-4 flex items-center gap-2 cursor-pointer">
                                     <HiOutlineChatBubbleLeftRight className="w-4 h-4" /> Message
                                 </a>
                                 {(() => {
@@ -161,19 +177,7 @@ const Profile = () => {
 
                                 {['Senior', 'Alumni'].includes(profile.role) && profile.followers?.some(f => (f._id || f).toString() === user?._id?.toString()) && (
                                     <button
-                                        onClick={async () => {
-                                            const topic = prompt("Enter topic for Mentoring Session:");
-                                            if (!topic) return;
-                                            const message = prompt("Enter a brief message about what you need help with:");
-                                            if (!message) return;
-
-                                            try {
-                                                await API.post('/mentoring', { mentorId: profile._id, topic, message });
-                                                toast.success('Session request sent to Mentor!');
-                                            } catch (err) {
-                                                toast.error(err.response?.data?.message || 'Failed to request');
-                                            }
-                                        }}
+                                        onClick={() => setShowMentoringModal(true)}
                                         className="btn-primary text-xs py-2.5 px-4 bg-secondary hover:bg-secondary/80 border-none cursor-pointer">
                                         Request Mentoring
                                     </button>
@@ -292,6 +296,40 @@ const Profile = () => {
                     </label>
                 )}
             </div>
+
+            {/* Mentoring Request Modal */}
+            {showMentoringModal && (
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl p-6 w-full max-w-md shadow-xl">
+                        <h3 className="text-lg font-bold text-slate-900 mb-2">Request Mentoring Session</h3>
+                        <p className="text-xs text-slate-500 mb-4">Send a request to {profile.name} to schedule a mentoring session.</p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1">Topic</label>
+                                <input 
+                                    value={mentoringTopic} 
+                                    onChange={e => setMentoringTopic(e.target.value)} 
+                                    className="input-field text-xs bg-slate-50 w-full" 
+                                    placeholder="e.g. Resume Review, Career Advice" 
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-700 mb-1">Message</label>
+                                <textarea 
+                                    value={mentoringMessage} 
+                                    onChange={e => setMentoringMessage(e.target.value)} 
+                                    className="input-field text-xs bg-slate-50 w-full min-h-[100px] resize-none" 
+                                    placeholder="Briefly describe what you'd like to discuss..." 
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-3 mt-6 justify-end">
+                            <button onClick={() => setShowMentoringModal(false)} className="btn-secondary text-xs py-2 px-4 cursor-pointer">Cancel</button>
+                            <button onClick={handleMentoringRequest} className="btn-primary text-xs py-2 px-4 bg-secondary border-none hover:bg-secondary/90 cursor-pointer">Send Request</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
