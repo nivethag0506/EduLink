@@ -17,7 +17,7 @@ const Projects = () => {
         if (!path) return '';
         if (path.startsWith('http')) return path;
         const baseUrl = import.meta.env.VITE_API_URL || '';
-        return `${baseUrl}/${path.replace(/^\\//, '')}`;
+        return `${baseUrl}/${path.startsWith('/') ? path.slice(1) : path}`;
     };
 
     
