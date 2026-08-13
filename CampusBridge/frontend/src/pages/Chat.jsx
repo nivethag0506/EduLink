@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
-import { HiOutlinePaperAirplane, HiOutlineVideoCamera, HiOutlinePhone, HiOutlineMagnifyingGlass } from 'react-icons/hi2';
+import { HiOutlinePaperAirplane, HiOutlineVideoCamera, HiOutlinePhone, HiOutlineMagnifyingGlass, HiOutlineChevronLeft } from 'react-icons/hi2';
 
 const Chat = () => {
     const { user } = useAuth();
@@ -95,9 +95,9 @@ const Chat = () => {
     };
 
     return (
-        <div className="flex h-[calc(100vh-8rem)] gap-6 text-slate-800 animate-fade-in">
+        <div className="flex h-[calc(100vh-8rem)] gap-0 md:gap-6 text-slate-800 animate-fade-in">
             {/* Contact list */}
-            <div className="w-80 card border border-slate-100 rounded-3xl p-0 overflow-hidden flex flex-col shrink-0 bg-white">
+            <div className={`w-full md:w-80 card border border-slate-100 rounded-3xl p-0 overflow-hidden flex-col shrink-0 bg-white ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
                 <div className="p-4 border-b border-slate-100 bg-slate-50 space-y-3">
                     <div className="flex justify-between items-center">
                         <h2 className="text-base font-bold text-slate-900 tracking-tight">Messages</h2>
@@ -135,11 +135,14 @@ const Chat = () => {
             </div>
 
             {/* Chat area */}
-            <div className="flex-1 card border border-slate-100 rounded-3xl p-0 overflow-hidden flex flex-col bg-white">
+            <div className={`flex-1 card border border-slate-100 rounded-3xl p-0 overflow-hidden flex-col bg-white ${selectedUser ? 'flex' : 'hidden md:flex'}`}>
                 {selectedUser ? (
                     <>
                         <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                             <div className="flex items-center gap-3">
+                                <button onClick={() => setSelectedUser(null)} className="md:hidden p-1.5 -ml-1 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-200">
+                                    <HiOutlineChevronLeft className="w-5 h-5" />
+                                </button>
                                 <div className="relative">
                                     <img
                                         src={selectedUser.profilePhoto ? `/${selectedUser.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name)}&background=6366f1&color=fff`}
