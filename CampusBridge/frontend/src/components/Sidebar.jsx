@@ -96,7 +96,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <div className="p-6 border-b border-slate-100">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 flex items-center justify-center">
-                            <img src="/kongu-logo.png" alt="Logo" className="w-full h-full object-contain" />
+                            <img src="/kongu-logo.svg" alt="Logo" className="w-full h-full object-contain" />
                         </div>
                         <div>
                             <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2">CampusBridge</h1>
