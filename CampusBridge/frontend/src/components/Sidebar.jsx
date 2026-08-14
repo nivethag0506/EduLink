@@ -17,98 +17,107 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         navigate('/login');
     };
 
-    let links = [];
+    const renderLinks = () => {
+        if (user?.role === 'Admin') {
+            const adminLinks = [
+                { to: '/admin', icon: HiOutlineShieldCheck, label: 'Admin Dashboard' },
+                { to: '/directory', icon: HiOutlineUsers, label: 'Directory' },
+                { to: '/notifications', icon: HiOutlineBell, label: 'Notifications' }
+            ];
+            return (
+                <div className="space-y-1">
+                    {adminLinks.map(({ to, icon: Icon, label }) => (
+                        <NavLink key={to} to={to} onClick={() => setIsOpen(false)} className={({ isActive }) => isActive ? 'sidebar-link-active' : 'sidebar-link'}>
+                            <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                            <span className="text-sm font-medium">{label}</span>
+                        </NavLink>
+                    ))}
+                </div>
+            );
+        }
 
-    if (user?.role === 'Admin') {
-        links = [
-            { to: '/admin', icon: HiOutlineShieldCheck, label: 'Admin Dashboard' },
-            { to: '/directory', icon: HiOutlineUsers, label: 'Directory' },
-            { to: '/notifications', icon: HiOutlineBell, label: 'Notifications' }
+        const groups = [
+            {
+                title: 'MAIN',
+                links: [
+                    { to: '/dashboard', icon: HiOutlineHome, label: 'Dashboard' },
+                    { to: '/mentoring', icon: HiOutlineAcademicCap, label: 'Mentorship' },
+                    { to: '/directory', icon: HiOutlineUsers, label: 'Directory' },
+                    { to: '/feed', icon: HiOutlineNewspaper, label: 'Social Feed' },
+                    { to: '/chat', icon: HiOutlineChatBubbleLeftRight, label: 'Messages' }
+                ]
+            },
+            {
+                title: 'CAREER',
+                links: [
+                    { to: '/job-board', icon: HiOutlineBriefcase, label: 'Job Board' },
+                    ...(user?.role === 'Student' ? [
+                        { to: '/my-applications', icon: HiOutlineNewspaper, label: 'My Applications' },
+                        { to: '/career', icon: HiOutlineChartBar, label: 'Career Planner' }
+                    ] : [])
+                ]
+            },
+            {
+                title: 'COMMUNITY',
+                links: [
+                    { to: '/projects', icon: HiOutlineCodeBracket, label: 'Project Showcase' },
+                    { to: '/interview-experiences', icon: HiOutlineBookOpen, label: 'Interview Experiences' },
+                    { to: '/resources', icon: HiOutlineFolderOpen, label: 'Resource Hub' }
+                ]
+            },
+            {
+                title: 'ACCOUNT',
+                links: [
+                    { to: '/notifications', icon: HiOutlineBell, label: 'Notifications' },
+                    { to: '/profile', icon: HiOutlineUser, label: 'Profile' }
+                ]
+            }
         ];
-    } else {
-        links = [
-            { to: '/dashboard', icon: HiOutlineHome, label: 'Dashboard' },
-            { to: '/mentoring', icon: HiOutlineAcademicCap, label: 'Mentorship' },
-            { to: '/directory', icon: HiOutlineUsers, label: 'Directory' },
-            { to: '/feed', icon: HiOutlineNewspaper, label: 'Social Feed' },
-            { to: '/chat', icon: HiOutlineChatBubbleLeftRight, label: 'Messages' },
-            { to: '/job-board', icon: HiOutlineBriefcase, label: 'Job Board' },
-            ...(user?.role === 'Student' ? [
-                { to: '/my-applications', icon: HiOutlineNewspaper, label: 'My Applications' },
-                { to: '/career', icon: HiOutlineChartBar, label: 'Career Planner' }
-            ] : []),
-            { to: '/projects', icon: HiOutlineCodeBracket, label: 'Project Showcase' },
-            { to: '/interview-experiences', icon: HiOutlineBookOpen, label: 'Interview Experiences' },
-            { to: '/resources', icon: HiOutlineFolderOpen, label: 'Resource Hub' },
-            { to: '/notifications', icon: HiOutlineBell, label: 'Notifications' },
-            { to: '/profile', icon: HiOutlineUser, label: 'Profile' },
-        ];
-    }
+
+        return groups.map((group, idx) => (
+            <div key={idx} className="mb-6 last:mb-0">
+                <h3 className="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] mb-2">{group.title}</h3>
+                <div className="space-y-0.5">
+                    {group.links.map(({ to, icon: Icon, label }) => (
+                        <NavLink key={to} to={to} onClick={() => setIsOpen(false)} className={({ isActive }) => isActive ? 'sidebar-link-active' : 'sidebar-link'}>
+                            <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                            <span className="text-sm font-medium">{label}</span>
+                        </NavLink>
+                    ))}
+                </div>
+            </div>
+        ));
+    };
 
     return (
         <>
-            {/* Mobile overlay */}
-            {isOpen && (
-                <div 
-                    className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden transition-opacity"
-                    onClick={() => setIsOpen(false)}
-                />
-            )}
-
+            {isOpen && <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 md:hidden transition-opacity" onClick={() => setIsOpen(false)} />}
             <aside className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col z-50 shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-                {/* Logo */}
                 <div className="p-6 border-b border-slate-100">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
                             <span className="text-white font-bold text-lg">C</span>
                         </div>
                         <div>
-                            <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2" title={user?.collegeName || 'CampusBridge'}>
-                                {user?.role === 'Admin' ? 'CampusBridge Admin' : (user?.collegeName || 'CampusBridge')}
-                            </h1>
-                            <p className="text-[10px] text-slate-400 font-medium tracking-wide uppercase mt-0.5">
-                                {user?.role === 'Admin' ? 'Platform Control' : 'CampusBridge Network'}
-                            </p>
+                            <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2">CampusBridge</h1>
+                            <p className="text-[10px] text-primary font-bold tracking-wide uppercase mt-0.5">Connect · Learn · Grow</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Nav */}
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                    {links.map(({ to, icon: Icon, label }) => (
-                        <NavLink
-                            key={to}
-                            to={to}
-                            onClick={() => setIsOpen(false)}
-                            className={({ isActive }) =>
-                                isActive ? 'sidebar-link-active' : 'sidebar-link'
-                            }
-                        >
-                            <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-                            <span className="text-sm font-medium">{label}</span>
-                        </NavLink>
-                    ))}
+                <nav className="flex-1 p-4 overflow-y-auto">
+                    {renderLinks()}
                 </nav>
 
-                {/* User section */}
-                <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-                    <div className="flex items-center gap-3 mb-3 bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/10">
-                            {user?.name?.charAt(0) || 'U'}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-slate-900 truncate">{user?.name}</p>
-                            <p className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wider">{user?.role}</p>
-                        </div>
+                <div className="p-4 border-t border-slate-100 bg-white">
+                    <div className="p-4 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border border-primary/10 mb-4 text-center">
+                        <p className="text-xs font-bold text-slate-900 mb-1">Upgrade to Pro</p>
+                        <p className="text-[10px] text-slate-500 mb-3">Unlock premium features and boost visibility.</p>
+                        <button className="btn-primary w-full py-2 text-xs">Upgrade Now ?</button>
                     </div>
-                    <button onClick={handleLogout} className="sidebar-link w-full text-red-500 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 cursor-pointer">
-                        <HiOutlineArrowRightOnRectangle className="w-5 h-5" />
-                        <span className="text-sm font-medium">Logout</span>
-                    </button>
                 </div>
             </aside>
         </>
     );
 };
-
 export default Sidebar;

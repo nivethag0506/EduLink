@@ -1,11 +1,11 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @theme {
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-primary-dark: #4f46e5;
-  --color-secondary: #a855f7;
-  --color-accent: #f59e0b;
+  --color-primary: #6b21a8; /* Deep Purple */
+  --color-primary-light: #9333ea; /* Bright Purple */
+  --color-primary-dark: #581c87;
+  --color-secondary: #818cf8; /* Soft Indigo */
+  --color-accent: #14b8a6; /* Teal */
   --color-dark: #f8fafc;
   --color-dark-card: #ffffff;
   --color-dark-hover: #f1f5f9;
@@ -13,7 +13,7 @@
   --color-success: #10b981;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -92,14 +92,18 @@
 
   /* Cards */
   .card {
-    @apply bg-dark-card rounded-2xl border border-dark-border p-6 transition-all duration-300;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    @apply bg-dark-card rounded-[20px] border border-slate-100 p-6 transition-all duration-300 relative overflow-hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
   }
 
   .card-hover:hover {
     transform: translateY(-2px);
-    border-color: rgba(99, 102, 241, 0.15);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
+    border-color: rgba(147, 51, 234, 0.15);
+    box-shadow: 0 12px 32px rgba(147, 51, 234, 0.06);
+  }
+  
+  .btn-active-scale:active {
+    transform: scale(0.97) !important;
   }
 
   /* Elegant Glass */
@@ -160,14 +164,14 @@
 
   /* Statistics Cards */
   .stat-card {
-    @apply bg-dark-card rounded-2xl border border-dark-border p-6 flex flex-col gap-2 transition-all duration-300;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    @apply bg-dark-card rounded-[20px] border border-slate-100 p-5 flex flex-col gap-1 transition-all duration-300 relative overflow-hidden;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
   }
 
   .stat-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(99, 102, 241, 0.15);
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.05);
+    border-color: rgba(147, 51, 234, 0.15);
+    box-shadow: 0 10px 28px rgba(147, 51, 234, 0.06);
   }
 
   /* Animations */
