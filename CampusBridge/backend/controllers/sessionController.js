@@ -72,58 +72,29 @@ const deleteSession = async (req, res) => {
     }
 };
 
-// POST /api/sessions/:id/cancel-request
-const requestCancellation = async (req, res) => {
+// DELETE /api/sessions/:id/register
+const unregisterForSession = async (req, res) => {
     try {
         const session = await Session.findById(req.params.id);
         if (!session) return res.status(404).json({ message: 'Session not found' });
         
-        if (!session.cancellationRequests.includes(req.user._id)) {
-            session.cancellationRequests.push(req.user._id);
-            await session.save();
+        session.registeredStudents = session.registeredStudents.filter(
+            studentId => studentId.toString() !== req.user._id.toString()
+        );
+        await session.save();
 
-            // Notify the alumni
-            await Notification.create({
-                userId: session.alumniId,
-                type: 'SESSION_CANCEL_REQUEST',
-                content: `${req.user.name} requested to cancel their registration for: ${session.topic}`,
-                link: `/sessions`
-            });
-        }
+        // Notify the alumni
+        await Notification.create({
+            userId: session.alumniId,
+            type: 'SESSION_CANCELLED',
+            content: `${req.user.name} cancelled their registration for: ${session.topic}`,
+            link: `/sessions`
+        });
+
         res.json(session);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// PUT /api/sessions/:id/approve-cancel
-const approveCancellation = async (req, res) => {
-    try {
-        const session = await Session.findById(req.params.id);
-        if (!session) return res.status(404).json({ message: 'Session not found' });
-        if (session.alumniId.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ message: 'Forbidden' });
-        }
-
-        const { studentId } = req.body;
-        
-        session.registeredStudents = session.registeredStudents.filter(id => id.toString() !== studentId);
-        session.cancellationRequests = session.cancellationRequests.filter(id => id.toString() !== studentId);
-        await session.save();
-
-        // Notify the student
-        await Notification.create({
-            userId: studentId,
-            type: 'SESSION_CANCEL_APPROVED',
-            content: `Your cancellation request for '${session.topic}' was approved.`,
-            link: `/sessions`
-        });
-
-        const populated = await session.populate('alumniId', 'name profilePhoto role');
-        res.json(populated);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-module.exports = { createSession, getSessions, registerForSession, deleteSession, requestCancellation, approveCancellation };
+module.exports = { createSession, getSessions, registerForSession, deleteSession, unregisterForSession };

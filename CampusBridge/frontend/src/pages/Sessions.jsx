@@ -58,24 +58,14 @@ const Sessions = () => {
         }
     };
 
-    const handleRequestCancellation = async (id) => {
-        if (!window.confirm('Request to cancel your registration?')) return;
+    const handleUnregister = async (id) => {
+        if (!window.confirm('Cancel your registration for this session?')) return;
         try {
-            const { data } = await API.post(`/sessions/${id}/cancel-request`);
+            const { data } = await API.delete(`/sessions/${id}/register`);
             setSessions(sessions.map(s => s._id === id ? data : s));
-            toast.success('Cancellation requested');
+            toast.success('Registration cancelled');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed');
-        }
-    };
-
-    const handleApproveCancellation = async (id, studentId) => {
-        try {
-            const { data } = await API.put(`/sessions/${id}/approve-cancel`, { studentId });
-            setSessions(sessions.map(s => s._id === id ? data : s));
-            toast.success('Approved cancellation');
-        } catch (err) {
-            toast.error('Failed to approve');
         }
     };
 
@@ -142,11 +132,7 @@ const Sessions = () => {
                             <div className="flex items-center gap-2">
                                 <span className="badge-success uppercase tracking-wider text-[9px] font-bold">✓ Registered</span>
                                 {getStatus(s) !== 'Ended' && (
-                                    s.cancellationRequests?.includes(user?._id) ? (
-                                        <span className="text-[10px] font-bold text-orange-500 ml-2">Cancellation Pending</span>
-                                    ) : (
-                                        <button onClick={() => handleRequestCancellation(s._id)} className="text-[10px] font-bold text-slate-400 hover:text-red-500 underline ml-2 cursor-pointer">Request Cancellation</button>
-                                    )
+                                    <button onClick={() => handleUnregister(s._id)} className="text-[10px] font-bold text-slate-400 hover:text-red-500 underline ml-2 cursor-pointer">Cancel Registration</button>
                                 )}
                             </div>
                         )}
@@ -157,13 +143,6 @@ const Sessions = () => {
                             </button>
                         )}
                     </div>
-                    
-                    {s.cancellationRequests?.length > 0 && s.alumniId?._id === user?._id && (
-                        <div className="w-full mt-3 p-3 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-between">
-                            <span className="text-xs font-semibold text-orange-800">{s.cancellationRequests.length} student(s) requested cancellation</span>
-                            <button onClick={() => handleApproveCancellation(s._id, s.cancellationRequests[0])} className="btn-primary bg-orange-500 hover:bg-orange-600 border-none text-[10px] py-1.5 px-3 cursor-pointer">Approve Request</button>
-                        </div>
-                    )}
                 </div>
             ))}
         </div>
