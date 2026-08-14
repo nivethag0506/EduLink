@@ -37,8 +37,15 @@ const Sessions = () => {
         }
     };
 
-    const isPast = (d) => new Date(d) < new Date();
-    const canJoin = (d) => new Date() >= new Date(d);
+    const getStatus = (session) => {
+        const now = new Date();
+        const start = new Date(session.date);
+        const end = new Date(start.getTime() + (session.duration || 60) * 60000);
+        
+        if (now < start) return 'Upcoming';
+        if (now >= start && now <= end) return 'Started';
+        return 'Ended';
+    };
 
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to cancel this session?')) return;
@@ -51,14 +58,24 @@ const Sessions = () => {
         }
     };
 
-    const handleUnregister = async (id) => {
-        if (!window.confirm('Cancel your registration for this session?')) return;
+    const handleRequestCancellation = async (id) => {
+        if (!window.confirm('Request to cancel your registration?')) return;
         try {
-            const { data } = await API.delete(`/sessions/${id}/register`);
+            const { data } = await API.post(`/sessions/${id}/cancel-request`);
             setSessions(sessions.map(s => s._id === id ? data : s));
-            toast.success('Registration cancelled');
+            toast.success('Cancellation requested');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed');
+        }
+    };
+
+    const handleApproveCancellation = async (id, studentId) => {
+        try {
+            const { data } = await API.put(`/sessions/${id}/approve-cancel`, { studentId });
+            setSessions(sessions.map(s => s._id === id ? data : s));
+            toast.success('Approved cancellation');
+        } catch (err) {
+            toast.error('Failed to approve');
         }
     };
 
@@ -100,38 +117,53 @@ const Sessions = () => {
                     No sessions scheduled yet.
                 </div>
             ) : sessions.map(s => (
-                <div key={s._id} className={`card border border-slate-100 bg-white rounded-3xl space-y-4 p-6 animate-slide-up shadow-sm ${isPast(s.date) ? 'opacity-50' : 'card-hover'}`}>
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <h3 className="text-base font-bold text-slate-900 leading-tight">{s.topic}</h3>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">by {s.alumniId?.name || 'Alumni'}</p>
+                    <div className={`card border border-slate-100 bg-white rounded-3xl space-y-4 p-6 animate-slide-up shadow-sm ${getStatus(s) === 'Ended' ? 'opacity-50' : 'card-hover'}`}>
+                        <div className="flex items-start justify-between">
+                            <div>
+                                <h3 className="text-base font-bold text-slate-900 leading-tight">{s.topic}</h3>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">by {s.alumniId?.name || 'Alumni'}</p>
+                            </div>
+                            {getStatus(s) === 'Ended' && <span className="badge-danger uppercase tracking-wider text-[9px] font-bold">Ended</span>}
+                            {getStatus(s) === 'Started' && <span className="bg-primary/10 text-primary uppercase tracking-wider text-[9px] font-bold px-2 py-1 rounded-full">Live</span>}
+                            {getStatus(s) === 'Upcoming' && <span className="badge-success uppercase tracking-wider text-[9px] font-bold">Upcoming</span>}
                         </div>
-                        {isPast(s.date) ? <span className="badge-danger uppercase tracking-wider text-[9px] font-bold">Past</span> : <span className="badge-success uppercase tracking-wider text-[9px] font-bold">Upcoming</span>}
-                    </div>
                     <p className="text-slate-600 text-xs leading-relaxed">{s.description}</p>
                     <div className="flex items-center gap-6 text-xs text-slate-500 font-semibold">
                         <span className="flex items-center gap-1.5"><HiOutlineCalendarDays className="w-4 h-4 text-primary" />{new Date(s.date).toLocaleString()}</span>
                         <span className="flex items-center gap-1.5"><HiOutlineUserGroup className="w-4 h-4 text-secondary" />{s.registeredStudents?.length || 0} registered</span>
                     </div>
                     <div className="flex items-center gap-3 pt-3 border-t border-slate-100 flex-wrap">
-                        {!isPast(s.date) && s.meetLink && canJoin(s.date) && <a href={s.meetLink} target="_blank" rel="noreferrer" className="btn-secondary text-xs py-2 px-4 cursor-pointer"><HiOutlineLink className="w-4 h-4 text-primary" /> Join Webinar</a>}
-                        {!isPast(s.date) && s.meetLink && !canJoin(s.date) && <span className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1"><HiOutlineCalendarDays className="w-3.5 h-3.5"/> Link opens at start time</span>}
+                        {getStatus(s) !== 'Ended' && s.meetLink && getStatus(s) === 'Started' && <a href={s.meetLink} target="_blank" rel="noreferrer" className="btn-secondary text-xs py-2 px-4 cursor-pointer"><HiOutlineLink className="w-4 h-4 text-primary" /> Join Webinar</a>}
+                        {getStatus(s) !== 'Ended' && s.meetLink && getStatus(s) !== 'Started' && <span className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1"><HiOutlineCalendarDays className="w-3.5 h-3.5"/> Link opens at start time</span>}
                         
-                        {!isPast(s.date) && user?.role !== 'Alumni' && !s.registeredStudents?.includes(user?._id) && <button onClick={() => handleRegister(s._id)} className="btn-primary text-xs py-2 px-5 cursor-pointer">Register Now</button>}
+                        {getStatus(s) !== 'Ended' && user?.role !== 'Alumni' && !s.registeredStudents?.includes(user?._id) && <button onClick={() => handleRegister(s._id)} className="btn-primary text-xs py-2 px-5 cursor-pointer">Register Now</button>}
                         
                         {s.registeredStudents?.includes(user?._id) && (
                             <div className="flex items-center gap-2">
                                 <span className="badge-success uppercase tracking-wider text-[9px] font-bold">✓ Registered</span>
-                                {!isPast(s.date) && <button onClick={() => handleUnregister(s._id)} className="text-[10px] font-bold text-red-400 hover:text-red-500 underline ml-2 cursor-pointer">Cancel Registration</button>}
+                                {getStatus(s) !== 'Ended' && (
+                                    s.cancellationRequests?.includes(user?._id) ? (
+                                        <span className="text-[10px] font-bold text-orange-500 ml-2">Cancellation Pending</span>
+                                    ) : (
+                                        <button onClick={() => handleRequestCancellation(s._id)} className="text-[10px] font-bold text-slate-400 hover:text-red-500 underline ml-2 cursor-pointer">Request Cancellation</button>
+                                    )
+                                )}
                             </div>
                         )}
 
                         {s.alumniId?._id === user?._id && (
-                            <button onClick={() => handleDelete(s._id)} className="btn-secondary text-red-500 hover:bg-red-50 hover:text-red-600 border-red-100 text-xs py-1.5 px-3 cursor-pointer ml-auto flex items-center gap-1">
-                                <HiOutlineTrash className="w-3.5 h-3.5" /> Cancel Session
+                            <button onClick={() => handleDelete(s._id)} className="btn-secondary text-red-500 hover:bg-red-50 hover:text-red-600 border-red-100 text-[10px] font-bold py-1.5 px-3 cursor-pointer ml-auto">
+                                Cancel Session
                             </button>
                         )}
                     </div>
+                    
+                    {s.cancellationRequests?.length > 0 && s.alumniId?._id === user?._id && (
+                        <div className="w-full mt-3 p-3 bg-orange-50 border border-orange-100 rounded-xl flex items-center justify-between">
+                            <span className="text-xs font-semibold text-orange-800">{s.cancellationRequests.length} student(s) requested cancellation</span>
+                            <button onClick={() => handleApproveCancellation(s._id, s.cancellationRequests[0])} className="btn-primary bg-orange-500 hover:bg-orange-600 border-none text-[10px] py-1.5 px-3 cursor-pointer">Approve Request</button>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>
