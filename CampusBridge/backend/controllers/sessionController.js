@@ -57,4 +57,44 @@ const registerForSession = async (req, res) => {
     }
 };
 
-module.exports = { createSession, getSessions, registerForSession };
+// DELETE /api/sessions/:id
+const deleteSession = async (req, res) => {
+    try {
+        const session = await Session.findById(req.params.id);
+        if (!session) return res.status(404).json({ message: 'Session not found' });
+        if (session.alumniId.toString() !== req.user._id.toString() && req.user.role !== 'Admin') {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+        await session.deleteOne();
+        res.json({ message: 'Session deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// DELETE /api/sessions/:id/register
+const unregisterForSession = async (req, res) => {
+    try {
+        const session = await Session.findById(req.params.id);
+        if (!session) return res.status(404).json({ message: 'Session not found' });
+        
+        session.registeredStudents = session.registeredStudents.filter(
+            studentId => studentId.toString() !== req.user._id.toString()
+        );
+        await session.save();
+
+        // Notify the alumni
+        await Notification.create({
+            userId: session.alumniId,
+            type: 'SESSION_CANCELLED',
+            content: `${req.user.name} cancelled their registration for: ${session.topic}`,
+            link: `/sessions`
+        });
+
+        res.json(session);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { createSession, getSessions, registerForSession, deleteSession, unregisterForSession };

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { HiOutlineCalendarDays, HiOutlineLink, HiOutlineUserGroup, HiOutlinePlusCircle } from 'react-icons/hi2';
+import { HiOutlineCalendarDays, HiOutlineLink, HiOutlineUserGroup, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineXMark } from 'react-icons/hi2';
 
 const Sessions = () => {
     const { user } = useAuth();
@@ -38,6 +38,29 @@ const Sessions = () => {
     };
 
     const isPast = (d) => new Date(d) < new Date();
+    const canJoin = (d) => new Date() >= new Date(d);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to cancel this session?')) return;
+        try {
+            await API.delete(`/sessions/${id}`);
+            setSessions(sessions.filter(s => s._id !== id));
+            toast.success('Session cancelled');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to cancel');
+        }
+    };
+
+    const handleUnregister = async (id) => {
+        if (!window.confirm('Cancel your registration for this session?')) return;
+        try {
+            const { data } = await API.delete(`/sessions/${id}/register`);
+            setSessions(sessions.map(s => s._id === id ? data : s));
+            toast.success('Registration cancelled');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed');
+        }
+    };
 
     return (
         <div className="max-w-3xl mx-auto space-y-6 text-slate-800 animate-fade-in">
@@ -90,10 +113,24 @@ const Sessions = () => {
                         <span className="flex items-center gap-1.5"><HiOutlineCalendarDays className="w-4 h-4 text-primary" />{new Date(s.date).toLocaleString()}</span>
                         <span className="flex items-center gap-1.5"><HiOutlineUserGroup className="w-4 h-4 text-secondary" />{s.registeredStudents?.length || 0} registered</span>
                     </div>
-                    <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-                        {!isPast(s.date) && s.meetLink && <a href={s.meetLink} target="_blank" rel="noreferrer" className="btn-secondary text-xs py-2 px-4 cursor-pointer"><HiOutlineLink className="w-4 h-4 text-primary" /> Join Webinar</a>}
+                    <div className="flex items-center gap-3 pt-3 border-t border-slate-100 flex-wrap">
+                        {!isPast(s.date) && s.meetLink && canJoin(s.date) && <a href={s.meetLink} target="_blank" rel="noreferrer" className="btn-secondary text-xs py-2 px-4 cursor-pointer"><HiOutlineLink className="w-4 h-4 text-primary" /> Join Webinar</a>}
+                        {!isPast(s.date) && s.meetLink && !canJoin(s.date) && <span className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1"><HiOutlineCalendarDays className="w-3.5 h-3.5"/> Link opens at start time</span>}
+                        
                         {!isPast(s.date) && user?.role !== 'Alumni' && !s.registeredStudents?.includes(user?._id) && <button onClick={() => handleRegister(s._id)} className="btn-primary text-xs py-2 px-5 cursor-pointer">Register Now</button>}
-                        {s.registeredStudents?.includes(user?._id) && <span className="badge-success uppercase tracking-wider text-[9px] font-bold">✓ Registered</span>}
+                        
+                        {s.registeredStudents?.includes(user?._id) && (
+                            <div className="flex items-center gap-2">
+                                <span className="badge-success uppercase tracking-wider text-[9px] font-bold">✓ Registered</span>
+                                {!isPast(s.date) && <button onClick={() => handleUnregister(s._id)} className="text-[10px] font-bold text-red-400 hover:text-red-500 underline ml-2 cursor-pointer">Cancel Registration</button>}
+                            </div>
+                        )}
+
+                        {s.alumniId?._id === user?._id && (
+                            <button onClick={() => handleDelete(s._id)} className="btn-secondary text-red-500 hover:bg-red-50 hover:text-red-600 border-red-100 text-xs py-1.5 px-3 cursor-pointer ml-auto flex items-center gap-1">
+                                <HiOutlineTrash className="w-3.5 h-3.5" /> Cancel Session
+                            </button>
+                        )}
                     </div>
                 </div>
             ))}
