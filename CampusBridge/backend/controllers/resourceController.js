@@ -102,7 +102,7 @@ const uploadResource = async (req, res) => {
         const { title, description, resourceType, category, subcategory, tags, skills, department, academicYear, company, externalUrl } = req.body;
         
         // RBAC status check
-        let status = 'Pending Review';
+        let status = 'Published';
         let verificationBadge = 'None';
         
         if (req.user.role === 'Faculty') {

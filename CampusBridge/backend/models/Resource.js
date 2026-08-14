@@ -31,7 +31,7 @@ const resourceSchema = new mongoose.Schema({
     status: { 
         type: String, 
         enum: ['Draft', 'Pending Review', 'Published', 'Rejected', 'Archived'], 
-        default: 'Pending Review',
+        default: 'Published',
         index: true
     },
     verificationBadge: { 
