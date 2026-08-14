@@ -89,7 +89,6 @@ const Admin = () => {
     const tabs = [
         { key: 'overview', label: 'Overview' },
         { key: 'users', label: 'Users' },
-        { key: 'colleges', label: 'Colleges' },
         { key: 'activity', label: 'Activity' },
     ];
 
@@ -286,37 +285,7 @@ const Admin = () => {
                 </div>
             )}
 
-            {/* Colleges */}
-            {tab === 'colleges' && (
-                <div className="space-y-4">
-                    <form onSubmit={addCollege} className="card bg-white border border-slate-100 rounded-3xl flex flex-col md:flex-row gap-3 items-end p-6 shadow-sm">
-                        <div className="flex-1 w-full">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Name</label>
-                            <input value={newCollege.name} onChange={e => setNewCollege({ ...newCollege, name: e.target.value })} className="input-field text-xs bg-white" required />
-                        </div>
-                        <div className="flex-1 w-full">
-                            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Domain</label>
-                            <input value={newCollege.domain} onChange={e => setNewCollege({ ...newCollege, domain: e.target.value })} className="input-field text-xs bg-white" required />
-                        </div>
-                        <button type="submit" className="btn-primary text-xs py-2.5 px-5 cursor-pointer w-full md:w-auto"><HiOutlinePlusCircle className="w-4 h-4" /> Add</button>
-                    </form>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {colleges.map(c => (
-                            <div key={c._id} className="card bg-white border border-slate-100 rounded-3xl p-6 card-hover shadow-sm relative group">
-                                <button onClick={() => deleteCollege(c._id)} className="absolute top-4 right-4 text-slate-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-colors cursor-pointer opacity-0 group-hover:opacity-100" title="Remove College">
-                                    <HiOutlineNoSymbol className="w-5 h-5" />
-                                </button>
-                                <h3 className="font-bold text-slate-900 text-base leading-tight pr-10">{c.name}</h3>
-                                <p className="text-xs text-slate-500 mt-1 font-semibold">{c.domain}</p>
-                                <div className="flex items-center justify-between mt-5 border-t border-slate-100 pt-3">
-                                    <span className="badge-primary uppercase text-[9px] font-bold tracking-wider">Code: {c.code}</span>
-                                    <span className="text-xs text-slate-500 font-semibold">{c.userCount} users</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+            {/* Colleges Tab Removed */}
 
             {/* Activity */}
             {tab === 'activity' && (

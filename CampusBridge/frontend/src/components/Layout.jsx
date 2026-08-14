@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import SearchModal from './SearchModal';
 import { HiOutlineMagnifyingGlass, HiOutlineBars3, HiOutlineBellAlert, HiOutlineChatBubbleLeftRight, HiOutlineUserCircle } from 'react-icons/hi2';
@@ -74,13 +74,13 @@ const Layout = () => {
                         </button>
                         
                         <div className="flex items-center gap-2 md:gap-4 ml-4">
-                            <button className="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors hidden sm:block">
+                            <Link to="/chat" className="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors hidden sm:block">
                                 <HiOutlineChatBubbleLeftRight className="w-6 h-6" />
-                            </button>
-                            <button className="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors">
+                            </Link>
+                            <Link to="/notifications" className="relative p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors">
                                 <HiOutlineBellAlert className="w-6 h-6" />
                                 <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                            </button>
+                            </Link>
                             <div className="flex items-center gap-3 pl-2 md:pl-4 border-l border-slate-200">
                                 <div className="hidden md:block text-right">
                                     <p className="text-sm font-bold text-slate-900 leading-tight">{user?.name || 'Student'}</p>

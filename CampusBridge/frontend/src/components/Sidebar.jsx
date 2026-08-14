@@ -95,8 +95,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <aside className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col z-50 shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 <div className="p-6 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20">
-                            <span className="text-white font-bold text-lg">C</span>
+                        <div className="w-10 h-10 flex items-center justify-center">
+                            <img src="/kongu-logo.png" alt="Logo" className="w-full h-full object-contain" />
                         </div>
                         <div>
                             <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2">CampusBridge</h1>
@@ -110,7 +110,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 </nav>
 
                 <div className="p-4 border-t border-slate-100 bg-white">
-                    {/* Premium banner removed */}
+                    <button onClick={handleLogout} className="sidebar-link w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 mt-auto cursor-pointer">
+                        <HiOutlineArrowRightOnRectangle className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                        <span className="text-sm font-medium">Logout</span>
+                    </button>
                 </div>
             </aside>
         </>

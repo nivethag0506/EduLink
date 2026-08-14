@@ -14,7 +14,12 @@ const Signup = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        API.get('/colleges').then(res => setColleges(res.data)).catch(() => { });
+        API.get('/colleges').then(res => {
+            setColleges(res.data);
+            if (res.data && res.data.length > 0) {
+                setForm(prev => ({ ...prev, collegeId: res.data[0]._id }));
+            }
+        }).catch(() => { });
     }, []);
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -59,8 +64,8 @@ const Signup = () => {
             <div className="w-full max-w-lg relative z-10 animate-slide-up">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/25">
-                            <span className="text-white font-black text-xl">C</span>
+                        <div className="w-12 h-12 flex items-center justify-center">
+                            <img src="/kongu-logo.png" alt="Logo" className="w-full h-full object-contain" />
                         </div>
                     </div>
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Create Account</h1>
@@ -101,8 +106,8 @@ const Signup = () => {
                                 <option value="Alumni">Alumni</option>
                             </select>
                         </div>
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">College</label>
+                        {/* College field removed from UI but auto-set in background */}
+                        <div className="hidden">
                             <select name="collegeId" value={form.collegeId} onChange={handleChange} className="input-field bg-slate-50 cursor-pointer" required>
                                 <option value="">Select College</option>
                                 {colleges.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
