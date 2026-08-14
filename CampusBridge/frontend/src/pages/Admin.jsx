@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import API from '../api/axios';
@@ -249,14 +250,14 @@ const Admin = () => {
                                     </div>
                                     <div className="flex justify-center">
                                         <a 
-                                            href={selectedUser.idCardImage ? `/${selectedUser.idCardImage.replace(/\\/g, '/')}` : '#'} 
+                                            href={selectedUser.idCardImage ? getImageUrl(selectedUser.idCardImage.replace(/\\/g, '/')) : '#'} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
                                             className="block hover:opacity-80 transition-opacity"
                                             title="Click to view full size"
                                         >
                                             <img
-                                                src={selectedUser.idCardImage ? `/${selectedUser.idCardImage.replace(/\\/g, '/')}` : 'https://placehold.co/150x150/e2e8f0/64748b?text=ID+Card'}
+                                                src={selectedUser.idCardImage ? getImageUrl(selectedUser.idCardImage.replace(/\\/g, '/')) : 'https://placehold.co/150x150/e2e8f0/64748b?text=ID+Card'}
                                                 className="w-32 h-32 object-contain bg-white border border-slate-200 rounded-xl"
                                                 alt="ID Card"
                                             />

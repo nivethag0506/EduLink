@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getImageUrl } from '../utils/getImageUrl';
 import { Outlet, Link } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import SearchModal from './SearchModal';
@@ -87,7 +88,7 @@ const Layout = () => {
                                     <p className="text-[10px] text-slate-500 font-medium">{user?.role || 'User'}</p>
                                 </div>
                                 <img 
-                                    src={user?.profilePhoto ? `/${user.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'S')}&background=6366f1&color=fff`} 
+                                    src={user?.profilePhoto ? getImageUrl(user.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'S')}&background=6366f1&color=fff`} 
                                     alt="Profile" 
                                     className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
                                 />

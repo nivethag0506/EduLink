@@ -1,0 +1,1 @@
+export const getImageUrl = (path) => { if (!path) return ''; if (path.startsWith('http')) return path; const baseUrl = import.meta.env.VITE_API_URL || ''; const normalizedPath = path.startsWith('/') ? path.substring(1) : path; return baseUrl ? `${baseUrl}/${normalizedPath}` : `/${normalizedPath}`; };

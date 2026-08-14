@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../utils/getImageUrl';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -280,7 +281,7 @@ const InterviewExperienceDetail = () => {
                         <div className="flex items-center space-x-3">
                             <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
                                 {exp.authorId?.profilePhoto ? (
-                                    <img src={`/${exp.authorId.profilePhoto}`} className="w-full h-full object-cover" alt="Author" />
+                                    <img src={getImageUrl(exp.authorId.profilePhoto)} className="w-full h-full object-cover" alt="Author" />
                                 ) : (
                                     <span className="text-slate-500 font-bold">{exp.authorId?.name?.charAt(0) || '?'}</span>
                                 )}

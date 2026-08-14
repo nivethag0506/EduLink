@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../utils/getImageUrl';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -263,7 +264,7 @@ const ResourceDetail = () => {
                         <div className="flex items-center space-x-3">
                             <div className="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
                                 {resData.uploadedBy?.profilePhoto ? (
-                                    <img src={`/${resData.uploadedBy.profilePhoto}`} className="w-full h-full object-cover" alt="Uploader" />
+                                    <img src={getImageUrl(resData.uploadedBy.profilePhoto)} className="w-full h-full object-cover" alt="Uploader" />
                                 ) : (
                                     <span className="text-slate-500 font-bold">{resData.uploadedBy?.name?.charAt(0) || '?'}</span>
                                 )}

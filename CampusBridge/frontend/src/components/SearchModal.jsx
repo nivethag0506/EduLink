@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '../utils/getImageUrl';
 import API from '../api/axios';
 import { HiOutlineMagnifyingGlass, HiOutlineXMark } from 'react-icons/hi2';
 
@@ -80,7 +81,7 @@ const SearchModal = ({ onClose }) => {
                         >
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white text-sm font-bold shrink-0 overflow-hidden">
                                 {u.profilePhoto
-                                    ? <img src={`/${u.profilePhoto}`} className="w-full h-full object-cover" alt="" />
+                                    ? <img src={getImageUrl(u.profilePhoto)} className="w-full h-full object-cover" alt="" />
                                     : u.name?.charAt(0)}
                             </div>
                             <div className="flex-1 min-w-0">

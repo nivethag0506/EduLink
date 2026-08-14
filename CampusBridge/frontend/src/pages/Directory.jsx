@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getImageUrl } from '../utils/getImageUrl';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -84,7 +85,7 @@ const Directory = () => {
                         <div key={u._id} className="card bg-white border border-slate-100 rounded-3xl p-6 shadow-sm flex flex-col items-center text-center transition-all hover:shadow-md hover:border-slate-200">
                             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl font-bold shadow-md shadow-primary/20 mb-4 overflow-hidden">
                                 {u.profilePhoto ? (
-                                    <img src={`/${u.profilePhoto}`} className="w-full h-full object-cover" alt={u.name} />
+                                    <img src={getImageUrl(u.profilePhoto)} className="w-full h-full object-cover" alt={u.name} />
                                 ) : (
                                     u.name?.charAt(0) || 'U'
                                 )}

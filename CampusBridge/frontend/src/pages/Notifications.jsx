@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import { HiOutlineBell } from 'react-icons/hi2';
@@ -88,7 +89,7 @@ const Notifications = () => {
                     {followRequests.map(r => (
                         <div key={r._id} className="card bg-white border border-slate-100 rounded-3xl flex items-center justify-between p-5 shadow-sm">
                             <div className="flex items-center gap-3">
-                                <img src={r.profilePhoto ? `/${r.profilePhoto}` : `https://ui-avatars.com/api/?name=${r.name}&background=6366f1&color=fff`} className="w-10 h-10 rounded-xl object-cover border border-slate-100" alt="" />
+                                <img src={r.profilePhoto ? getImageUrl(r.profilePhoto) : `https://ui-avatars.com/api/?name=${r.name}&background=6366f1&color=fff`} className="w-10 h-10 rounded-xl object-cover border border-slate-100" alt="" />
                                 <div>
                                     <p className="text-slate-900 font-semibold text-sm">{r.name}</p>
                                     <p className="text-xs text-slate-500 font-medium">{r.role}</p>
@@ -111,7 +112,7 @@ const Notifications = () => {
                         <div key={m._id} className="card bg-white border border-primary/20 rounded-3xl p-5 shadow-sm">
                             <div className="flex justify-between items-start mb-3">
                                 <div className="flex items-center gap-3">
-                                    <img src={m.studentId?.profilePhoto ? `/${m.studentId.profilePhoto}` : `https://ui-avatars.com/api/?name=${m.studentId?.name}&background=6366f1&color=fff`} className="w-10 h-10 rounded-xl object-cover border border-slate-100" alt="" />
+                                    <img src={m.studentId?.profilePhoto ? getImageUrl(m.studentId.profilePhoto) : `https://ui-avatars.com/api/?name=${m.studentId?.name}&background=6366f1&color=fff`} className="w-10 h-10 rounded-xl object-cover border border-slate-100" alt="" />
                                     <div>
                                         <p className="text-slate-900 font-semibold text-sm">{m.studentId?.name} requested a session</p>
                                         <p className="text-xs text-slate-500">Topic: {m.topic}</p>

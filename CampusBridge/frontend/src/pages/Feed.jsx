@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -175,13 +176,13 @@ const Feed = () => {
                         {post.media?.length > 0 && (
                             <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden border border-slate-100">
                                 {post.media.map((m, i) => (
-                                    <img key={i} src={`/${m}`} alt="" className="w-full h-48 object-cover hover:scale-102 transition-transform duration-500" />
+                                    <img key={i} src={getImageUrl(m)} alt="" className="w-full h-48 object-cover hover:scale-102 transition-transform duration-500" />
                                 ))}
                             </div>
                         )}
 
                         {post.fileAttachment && (
-                            <a href={`/${post.fileAttachment}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-primary text-xs font-semibold hover:underline bg-primary/5 border border-primary/10 rounded-xl py-2 px-3.5">
+                            <a href={getImageUrl(post.fileAttachment)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-primary text-xs font-semibold hover:underline bg-primary/5 border border-primary/10 rounded-xl py-2 px-3.5">
                                 <HiOutlinePaperClip className="w-4 h-4" /> View Attachment (PDF)
                             </a>
                         )}
@@ -205,7 +206,7 @@ const Feed = () => {
                                         ) : (
                                             likersMap[post._id].map(liker => (
                                                 <a key={liker._id} href={`/profile/${liker._id}`} className="block px-3 py-1.5 hover:bg-slate-50 flex items-center gap-2">
-                                                    <img src={liker.profilePhoto ? `/${liker.profilePhoto}` : `https://ui-avatars.com/api/?name=${liker.name}&size=24`} className="w-6 h-6 rounded-full" alt="" />
+                                                    <img src={liker.profilePhoto ? getImageUrl(liker.profilePhoto) : `https://ui-avatars.com/api/?name=${liker.name}&size=24`} className="w-6 h-6 rounded-full" alt="" />
                                                     <div className="flex-1 truncate">
                                                         <p className="text-slate-900 text-xs whitespace-nowrap overflow-hidden text-ellipsis">{liker.name}</p>
                                                     </div>

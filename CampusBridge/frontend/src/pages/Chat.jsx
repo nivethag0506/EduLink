@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import API from '../api/axios';
@@ -115,7 +116,7 @@ const Chat = () => {
                             className={`w-full flex items-center gap-3.5 px-5 py-4 hover:bg-slate-50 transition-all text-left border-l-2 cursor-pointer ${selectedUser?._id === contact._id ? 'bg-primary/5 border-primary' : 'border-transparent'}`}>
                             <div className="relative shrink-0">
                                 <img
-                                    src={contact.profilePhoto ? `/${contact.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=6366f1&color=fff`}
+                                    src={contact.profilePhoto ? getImageUrl(contact.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent(contact.name)}&background=6366f1&color=fff`}
                                     className="w-10 h-10 rounded-xl object-cover"
                                     alt=""
                                 />
@@ -141,7 +142,7 @@ const Chat = () => {
                                 </button>
                                 <div className="relative">
                                     <img
-                                        src={selectedUser.profilePhoto ? `/${selectedUser.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name)}&background=6366f1&color=fff`}
+                                        src={selectedUser.profilePhoto ? getImageUrl(selectedUser.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name)}&background=6366f1&color=fff`}
                                         className="w-10 h-10 rounded-xl object-cover"
                                         alt=""
                                     />

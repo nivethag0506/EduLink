@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
@@ -19,13 +20,7 @@ const ProjectDetail = () => {
     const [loading, setLoading] = useState(true);
     const [analyzing, setAnalyzing] = useState(false);
     
-    const getImageUrl = (path) => {
-        if (!path) return '';
-        if (path.startsWith('http')) return path;
-        const baseUrl = import.meta.env.VITE_API_URL || '';
-        return `${baseUrl}/${path.startsWith('/') ? path.slice(1) : path}`;
-    };
-
+    
     const [activeTab, setActiveTab] = useState('overview'); // overview, technical, community
 
     useEffect(() => {

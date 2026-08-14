@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import API from '../api/axios';
@@ -104,7 +105,7 @@ const Profile = () => {
                     <div className="relative group shrink-0 -mt-14 mx-auto md:mx-0">
                         <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-4xl font-extrabold border-4 border-white overflow-hidden shadow-md">
                             {profile.profilePhoto ? (
-                                <img src={`/${profile.profilePhoto}`} className="w-full h-full object-cover" alt="" />
+                                <img src={getImageUrl(profile.profilePhoto)} className="w-full h-full object-cover" alt="" />
                             ) : profile.name?.charAt(0)}
                         </div>
                         {isOwn && (
@@ -285,7 +286,7 @@ const Profile = () => {
                     <HiOutlineDocumentText className="w-5 h-5 text-accent" /> Resume
                 </h2>
                 {profile.resumePDF ? (
-                    <a href={`/${profile.resumePDF}`} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs font-semibold bg-primary/5 border border-primary/10 rounded-xl py-2 px-4 inline-flex">View Resume (PDF)</a>
+                    <a href={getImageUrl(profile.resumePDF)} target="_blank" rel="noreferrer" className="text-primary hover:underline text-xs font-semibold bg-primary/5 border border-primary/10 rounded-xl py-2 px-4 inline-flex">View Resume (PDF)</a>
                 ) : (
                     <p className="text-slate-500 text-xs">No resume uploaded.</p>
                 )}

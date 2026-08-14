@@ -1,3 +1,4 @@
+import { getImageUrl } from "../utils/getImageUrl";
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
@@ -274,7 +275,7 @@ const Dashboard = () => {
                                     <div key={i} className="min-w-[260px] md:min-w-0 md:flex-1 snap-start border border-slate-100 rounded-2xl p-5 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
-                                                <img src={m.profilePhoto ? `/${m.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=6b21a8&color=fff`} className="w-12 h-12 rounded-xl object-cover" alt="" />
+                                                <img src={m.profilePhoto ? getImageUrl(m.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent(m.name)}&background=6b21a8&color=fff`} className="w-12 h-12 rounded-xl object-cover" alt="" />
                                                 <div>
                                                     <h3 className="font-bold text-slate-900 text-sm flex items-center gap-1">
                                                         {m.name} 
@@ -333,7 +334,7 @@ const Dashboard = () => {
                                     <div key={i} className="flex gap-4 relative z-10">
                                         <div className="w-8 h-8 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-primary shrink-0 shadow-sm overflow-hidden">
                                             {post.author?.profilePhoto ? (
-                                                <img src={`/${post.author.profilePhoto}`} className="w-full h-full object-cover" />
+                                                <img src={getImageUrl(post.author.profilePhoto)} className="w-full h-full object-cover" />
                                             ) : (
                                                 <span className="font-bold text-xs">{post.author?.name?.charAt(0) || 'U'}</span>
                                             )}
@@ -564,7 +565,7 @@ const Dashboard = () => {
                                     <div key={r._id} className="border-b border-slate-100 pb-4 last:border-0 last:pb-0 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                         <div className="flex items-center gap-3">
                                             <img
-                                                src={r.studentId?.profilePhoto ? `/${r.studentId.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.studentId?.name || 'S')}&background=8b5cf6&color=fff`}
+                                                src={r.studentId?.profilePhoto ? getImageUrl(r.studentId.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent(r.studentId?.name || 'S')}&background=8b5cf6&color=fff`}
                                                 className="w-10 h-10 rounded-xl object-cover"
                                                 alt=""
                                             />
@@ -629,7 +630,7 @@ const Dashboard = () => {
                                     <div className="flex justify-between items-start">
                                         <div className="flex items-center gap-3">
                                             <img
-                                                src={app.studentId?.profilePhoto ? `/${app.studentId.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(app.studentId?.name || 'S')}&background=6366f1&color=fff`}
+                                                src={app.studentId?.profilePhoto ? getImageUrl(app.studentId.profilePhoto) : `https://ui-avatars.com/api/?name=${encodeURIComponent(app.studentId?.name || 'S')}&background=6366f1&color=fff`}
                                                 className="w-10 h-10 rounded-xl object-cover"
                                                 alt=""
                                             />
@@ -649,7 +650,7 @@ const Dashboard = () => {
 
                                     <div className="flex flex-wrap gap-2 justify-end">
                                         {app.resumePath && (
-                                            <a href={`/${app.resumePath.replace(/\\/g, '/')}`} target="_blank" rel="noopener noreferrer" className="btn-secondary text-[10px] py-1 px-3 bg-slate-100 hover:bg-slate-200 border-0 text-slate-700">View Resume</a>
+                                            <a href={getImageUrl(app.resumePath.replace(/\\/g, '/'))} target="_blank" rel="noopener noreferrer" className="btn-secondary text-[10px] py-1 px-3 bg-slate-100 hover:bg-slate-200 border-0 text-slate-700">View Resume</a>
                                         )}
                                         {['Applied', 'Shortlisted'].includes(app.status) && (
                                             <>
