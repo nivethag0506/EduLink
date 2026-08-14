@@ -33,6 +33,7 @@ const Profile = () => {
     const [editingPostId, setEditingPostId] = useState(null);
     const [editContent, setEditContent] = useState('');
     const [editType, setEditType] = useState('Doubt');
+    const [showPosts, setShowPosts] = useState(false);
 
     const isOwn = !id || id === user?._id;
 
@@ -402,16 +403,25 @@ const Profile = () => {
 
             {/* Posts */}
             <div className="card border border-slate-100 rounded-3xl p-6 bg-white shadow-sm space-y-4">
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 mb-4">
-                    <HiOutlineChatBubbleLeftRight className="w-5 h-5 text-primary" /> Posts
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <HiOutlineChatBubbleLeftRight className="w-5 h-5 text-primary" /> Posts
+                    </h2>
+                    <button 
+                        onClick={() => setShowPosts(!showPosts)} 
+                        className="text-primary hover:text-primary-dark text-xs font-bold cursor-pointer"
+                    >
+                        {showPosts ? 'Hide' : 'View'}
+                    </button>
+                </div>
                 
-                {posts.length === 0 ? (
-                    <div className="text-center py-8 text-slate-400 bg-slate-50 rounded-2xl border border-slate-100 text-sm">
-                        No posts yet.
-                    </div>
-                ) : (
-                    posts.map(post => (
+                {showPosts && (
+                    posts.length === 0 ? (
+                        <div className="text-center py-8 text-slate-400 bg-slate-50 rounded-2xl border border-slate-100 text-sm">
+                            No posts yet.
+                        </div>
+                    ) : (
+                        posts.map(post => (
                         <div key={post._id} className="card border border-slate-100 bg-white rounded-3xl space-y-4 p-6 shadow-sm">
                             <div className="flex items-center gap-3">
                                 <a href={`/profile/${post.authorId?._id}`} className="w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-white text-sm font-bold hover:opacity-80 transition-opacity cursor-pointer">
