@@ -13,6 +13,17 @@ require('dotenv').config();
 // Connect DB
 connectDB();
 
+// TEMPORARY: Auto-delete TCS resource requested by user
+setTimeout(async () => {
+    try {
+        const Resource = require('./models/Resource');
+        await Resource.deleteMany({ title: { $regex: /TCS/i } });
+        console.log("Deleted TCS Resources from Database!");
+    } catch(err) {
+        console.log(err);
+    }
+}, 5000);
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
