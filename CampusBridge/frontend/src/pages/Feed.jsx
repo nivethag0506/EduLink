@@ -202,11 +202,11 @@ const Feed = () => {
                             </div>
                             {post.authorId?._id === user?._id && (
                                 <div className="flex items-center gap-2 mr-2">
-                                    <button onClick={() => startEditing(post)} className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer" title="Edit Post">
-                                        <HiOutlinePencilSquare className="w-4 h-4" />
+                                    <button onClick={() => startEditing(post)} className="p-1 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer" title="Edit Post">
+                                        <HiOutlinePencilSquare className="w-3.5 h-3.5" />
                                     </button>
-                                    <button onClick={() => handleDeletePost(post._id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete Post">
-                                        <HiOutlineTrash className="w-4 h-4" />
+                                    <button onClick={() => handleDeletePost(post._id)} className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete Post">
+                                        <HiOutlineTrash className="w-3.5 h-3.5" />
                                     </button>
                                 </div>
                             )}

@@ -238,12 +238,12 @@ const Profile = () => {
                             <div className="flex gap-2 pt-2 self-stretch md:self-auto justify-center">
                                 {editing ? (
                                     <>
-                                        <button onClick={handleSave} className="btn-primary text-xs py-2 px-4 cursor-pointer">Save</button>
-                                        <button onClick={() => setEditing(false)} className="btn-secondary text-xs py-2 px-4 cursor-pointer">Cancel</button>
+                                        <button onClick={handleSave} className="btn-primary text-[10px] py-1.5 px-3 cursor-pointer">Save</button>
+                                        <button onClick={() => setEditing(false)} className="btn-secondary text-[10px] py-1.5 px-3 cursor-pointer">Cancel</button>
                                     </>
                                 ) : (
-                                    <button onClick={() => setEditing(true)} className="btn-secondary text-xs py-2 px-4 flex items-center gap-2 cursor-pointer">
-                                        <HiOutlinePencilSquare className="w-4 h-4 text-primary" /> Edit Profile
+                                    <button onClick={() => setEditing(true)} className="btn-secondary text-[10px] py-1.5 px-3 flex items-center gap-1.5 cursor-pointer">
+                                        <HiOutlinePencilSquare className="w-3.5 h-3.5 text-primary" /> Edit Profile
                                     </button>
                                 )}
                             </div>
@@ -433,11 +433,11 @@ const Profile = () => {
                                 </div>
                                 {post.authorId?._id === user?._id && (
                                     <div className="flex items-center gap-2 mr-2">
-                                        <button onClick={() => startEditing(post)} className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer" title="Edit Post">
-                                            <HiOutlinePencilSquare className="w-4 h-4" />
+                                        <button onClick={() => startEditing(post)} className="p-1 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer" title="Edit Post">
+                                            <HiOutlinePencilSquare className="w-3.5 h-3.5" />
                                         </button>
-                                        <button onClick={() => handleDeletePost(post._id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete Post">
-                                            <HiOutlineTrash className="w-4 h-4" />
+                                        <button onClick={() => handleDeletePost(post._id)} className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete Post">
+                                            <HiOutlineTrash className="w-3.5 h-3.5" />
                                         </button>
                                     </div>
                                 )}
