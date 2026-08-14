@@ -46,9 +46,10 @@ const updatePost = async (req, res) => {
 // GET /api/posts  — college-scoped feed
 const getFeed = async (req, res) => {
     try {
-        const { type, page = 1 } = req.query;
+        const { type, page = 1, authorId } = req.query;
         const filter = { collegeId: req.user.collegeId };
         if (type) filter.type = type;
+        if (authorId) filter.authorId = authorId;
         const limit = 20;
         const posts = await Post.find(filter)
             .sort({ createdAt: -1 })
