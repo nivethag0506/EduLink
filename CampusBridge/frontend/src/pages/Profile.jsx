@@ -546,7 +546,7 @@ const Profile = () => {
                             )}
                         </div>
                     ))
-                )}
+                ))}
             </div>
 
             {/* Mentoring Request Modal */}
