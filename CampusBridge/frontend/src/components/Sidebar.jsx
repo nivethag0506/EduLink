@@ -95,7 +95,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <aside className={`fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-100 flex flex-col z-50 shadow-sm transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
                 <div className="p-6 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 flex items-center justify-center">
+                        <div className="w-14 h-14 flex items-center justify-center">
                             <img src="/kongu-logo.svg" alt="Logo" className="w-full h-full object-contain" />
                         </div>
                         <div>

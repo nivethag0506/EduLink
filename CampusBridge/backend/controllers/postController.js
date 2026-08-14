@@ -20,6 +20,29 @@ const createPost = async (req, res) => {
     }
 };
 
+// PUT /api/posts/:id
+const updatePost = async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+        
+        if (post.authorId.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Not authorized to edit this post' });
+        }
+
+        const { content, type } = req.body;
+        post.content = content || post.content;
+        post.type = type || post.type;
+        
+        await post.save();
+        
+        const populated = await post.populate('authorId', 'name profilePhoto role');
+        res.json(populated);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // GET /api/posts  — college-scoped feed
 const getFeed = async (req, res) => {
     try {
@@ -123,4 +146,4 @@ const getLikes = async (req, res) => {
     }
 };
 
-module.exports = { createPost, getFeed, toggleLike, addComment, deletePost, getLikes };
+module.exports = { createPost, getFeed, toggleLike, addComment, deletePost, getLikes, updatePost };

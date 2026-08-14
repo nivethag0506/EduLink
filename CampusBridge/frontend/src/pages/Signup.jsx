@@ -64,7 +64,7 @@ const Signup = () => {
             <div className="w-full max-w-lg relative z-10 animate-slide-up">
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-3 mb-4">
-                        <div className="w-16 h-16 mx-auto mb-6 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center p-3">
+                        <div className="w-24 h-24 mx-auto mb-6 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center p-4">
                             <img src="/kongu-logo.svg" alt="Logo" className="w-full h-full object-contain" />
                         </div>
                     </div>

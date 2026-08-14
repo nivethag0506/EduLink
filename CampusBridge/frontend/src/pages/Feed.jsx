@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
-import { HiOutlineHeart, HiHeart, HiOutlineChatBubbleLeft, HiOutlinePaperClip, HiOutlinePhoto } from 'react-icons/hi2';
+import { HiOutlineHeart, HiHeart, HiOutlineChatBubbleLeft, HiOutlinePaperClip, HiOutlinePhoto, HiOutlineTrash, HiOutlinePencilSquare, HiOutlineXMark } from 'react-icons/hi2';
 
 const POST_TYPES = ['All', 'Doubt', 'Project', 'Internship', 'Event', 'Announcement'];
 const POST_TYPE_COLORS = {
@@ -24,6 +24,9 @@ const Feed = () => {
     const [showLikers, setShowLikers] = useState({});
     const [likersMap, setLikersMap] = useState({});
     const [loading, setLoading] = useState(true);
+    const [editingPostId, setEditingPostId] = useState(null);
+    const [editContent, setEditContent] = useState('');
+    const [editType, setEditType] = useState('Doubt');
 
     const fetchPosts = async () => {
         try {
@@ -90,6 +93,35 @@ const Feed = () => {
             setCommentText({ ...commentText, [postId]: '' });
         } catch (err) {
             toast.error('Failed to add comment');
+        }
+    };
+
+    const handleDeletePost = async (postId) => {
+        if (!window.confirm('Are you sure you want to delete this post?')) return;
+        try {
+            await API.delete(`/posts/${postId}`);
+            setPosts(posts.filter(p => p._id !== postId));
+            toast.success('Post deleted');
+        } catch (err) {
+            toast.error('Failed to delete post');
+        }
+    };
+
+    const startEditing = (post) => {
+        setEditingPostId(post._id);
+        setEditContent(post.content);
+        setEditType(post.type);
+    };
+
+    const handleUpdatePost = async (postId) => {
+        if (!editContent.trim()) return;
+        try {
+            const { data } = await API.put(`/posts/${postId}`, { content: editContent, type: editType });
+            setPosts(posts.map(p => p._id === postId ? data : p));
+            setEditingPostId(null);
+            toast.success('Post updated');
+        } catch (err) {
+            toast.error('Failed to update post');
         }
     };
 
@@ -168,10 +200,43 @@ const Feed = () => {
                                 <a href={`/profile/${post.authorId?._id}`} className="text-slate-900 font-semibold text-sm hover:text-primary transition-colors cursor-pointer block truncate">{post.authorId?.name}</a>
                                 <p className="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-0.5">{post.authorId?.role} · {timeAgo(post.createdAt)}</p>
                             </div>
+                            {post.authorId?._id === user?._id && (
+                                <div className="flex items-center gap-2 mr-2">
+                                    <button onClick={() => startEditing(post)} className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer" title="Edit Post">
+                                        <HiOutlinePencilSquare className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => handleDeletePost(post._id)} className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer" title="Delete Post">
+                                        <HiOutlineTrash className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            )}
                             <span className={POST_TYPE_COLORS[post.type] || 'badge-primary'}>{post.type}</span>
                         </div>
 
-                        <p className="text-slate-700 leading-relaxed text-sm">{post.content}</p>
+                        {editingPostId === post._id ? (
+                            <div className="space-y-3">
+                                <textarea 
+                                    value={editContent} 
+                                    onChange={(e) => setEditContent(e.target.value)}
+                                    className="input-field min-h-[100px] resize-none text-sm bg-white"
+                                />
+                                <div className="flex items-center justify-between">
+                                    <select 
+                                        value={editType} 
+                                        onChange={(e) => setEditType(e.target.value)}
+                                        className="input-field text-xs py-1.5 w-32 bg-white"
+                                    >
+                                        {POST_TYPES.filter(t => t !== 'All').map(t => <option key={t} value={t}>{t}</option>)}
+                                    </select>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => setEditingPostId(null)} className="btn-secondary text-xs py-1.5 px-4 cursor-pointer">Cancel</button>
+                                        <button onClick={() => handleUpdatePost(post._id)} className="btn-primary text-xs py-1.5 px-4 cursor-pointer">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-slate-700 leading-relaxed text-sm">{post.content}</p>
+                        )}
 
                         {post.media?.length > 0 && (
                             <div className="grid grid-cols-2 gap-2 rounded-2xl overflow-hidden border border-slate-100">
