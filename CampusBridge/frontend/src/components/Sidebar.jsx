@@ -42,6 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 links: [
                     { to: '/dashboard', icon: HiOutlineHome, label: 'Dashboard' },
                     { to: '/mentoring', icon: HiOutlineAcademicCap, label: 'Mentorship' },
+                    { to: '/sessions', icon: HiOutlineCalendarDays, label: 'Sessions' },
                     { to: '/directory', icon: HiOutlineUsers, label: 'Directory' },
                     { to: '/feed', icon: HiOutlineNewspaper, label: 'Social Feed' },
                     { to: '/chat', icon: HiOutlineChatBubbleLeftRight, label: 'Messages' }
