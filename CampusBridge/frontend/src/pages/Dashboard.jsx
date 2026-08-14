@@ -30,6 +30,8 @@ const Dashboard = () => {
     const [alumniJobs, setAlumniJobs] = useState([]);
     const [alumniApplicants, setAlumniApplicants] = useState([]);
     const [selectedJobForApplicants, setSelectedJobForApplicants] = useState(null);
+    const [recentPosts, setRecentPosts] = useState([]);
+    const [topJobs, setTopJobs] = useState([]);
 
     const isAlumni = ['Alumni', 'Senior'].includes(user?.role);
 
@@ -48,6 +50,10 @@ const Dashboard = () => {
                 
                 const reqs = mentRes.data;
                 setRequests(reqs);
+
+                // Fetch posts and all jobs separately to avoid failing main promise if they fail
+                API.get('/posts').then(res => setRecentPosts(res.data.slice(0, 4))).catch(() => {});
+                API.get('/jobs').then(res => setTopJobs(res.data.slice(0, 4))).catch(() => {});
 
                 setStats(prev => ({
                     ...prev,
@@ -136,6 +142,8 @@ const Dashboard = () => {
     };
 
     const renderStudentView = () => {
+        const profileProgress = Math.min(100, 20 + (user?.skills?.length ? 20 : 0) + (user?.experience?.length ? 20 : 0) + (user?.education?.length ? 20 : 0) + (user?.profilePhoto ? 20 : 0));
+
         return (
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-fade-in text-slate-800 pb-10">
                 {/* Left/Main Column - spans 2 cols on xl screens */}
@@ -321,43 +329,23 @@ const Dashboard = () => {
                             </div>
                             <div className="space-y-6 relative">
                                 <div className="absolute left-[15px] top-2 bottom-2 w-px bg-slate-100 z-0"></div>
-                                
-                                <div className="flex gap-4 relative z-10">
-                                    <div className="w-8 h-8 rounded-full bg-blue-50 border-2 border-white flex items-center justify-center text-blue-500 shrink-0 shadow-sm">
-                                        <HiOutlineBriefcase className="w-4 h-4" />
+                                {recentPosts.length > 0 ? recentPosts.map((post, i) => (
+                                    <div key={i} className="flex gap-4 relative z-10">
+                                        <div className="w-8 h-8 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-primary shrink-0 shadow-sm overflow-hidden">
+                                            {post.author?.profilePhoto ? (
+                                                <img src={`/${post.author.profilePhoto}`} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="font-bold text-xs">{post.author?.name?.charAt(0) || 'U'}</span>
+                                            )}
+                                        </div>
+                                        <div className="pt-1.5">
+                                            <p className="text-xs font-bold text-slate-900 line-clamp-1">{post.author?.name || 'Someone'} shared a post: {post.content?.substring(0, 30)}...</p>
+                                            <p className="text-[10px] text-slate-400 mt-1">{new Date(post.createdAt).toLocaleDateString()}</p>
+                                        </div>
                                     </div>
-                                    <div className="pt-1.5">
-                                        <p className="text-xs font-bold text-slate-900">Rahul shared a new job opportunity at Google</p>
-                                        <p className="text-[10px] text-slate-400 mt-1">2h ago</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4 relative z-10">
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-primary shrink-0 shadow-sm">
-                                        <HiOutlineChatBubbleLeftRight className="w-4 h-4" />
-                                    </div>
-                                    <div className="pt-1.5">
-                                        <p className="text-xs font-bold text-slate-900">Priya commented on your project</p>
-                                        <p className="text-[10px] text-slate-400 mt-1">5h ago</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4 relative z-10">
-                                    <div className="w-8 h-8 rounded-full bg-emerald-50 border-2 border-white flex items-center justify-center text-emerald-500 shrink-0 shadow-sm">
-                                        <HiOutlineDocumentText className="w-4 h-4" />
-                                    </div>
-                                    <div className="pt-1.5">
-                                        <p className="text-xs font-bold text-slate-900">New resource added: DSA Roadmap 2024</p>
-                                        <p className="text-[10px] text-slate-400 mt-1">1d ago</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-4 relative z-10">
-                                    <div className="w-8 h-8 rounded-full bg-amber-50 border-2 border-white flex items-center justify-center text-amber-500 shrink-0 shadow-sm">
-                                        <HiOutlineUserGroup className="w-4 h-4" />
-                                    </div>
-                                    <div className="pt-1.5">
-                                        <p className="text-xs font-bold text-slate-900">Arjun requested a mentoring session</p>
-                                        <p className="text-[10px] text-slate-400 mt-1">2d ago</p>
-                                    </div>
-                                </div>
+                                )) : (
+                                    <p className="text-xs text-slate-500 text-center py-4 relative z-10 bg-white">No recent activity.</p>
+                                )}
                             </div>
                         </div>
 
@@ -368,54 +356,20 @@ const Dashboard = () => {
                                 <a href="/job-board" className="text-xs font-bold text-primary hover:underline">View All</a>
                             </div>
                             <div className="space-y-4">
-                                <div className="flex items-center gap-4 group cursor-pointer">
-                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                                        <span className="font-bold text-lg text-slate-800">G</span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-xs font-bold text-slate-900 truncate group-hover:text-primary transition-colors">SDE Intern</h3>
-                                        <p className="text-[10px] text-slate-500 mt-0.5 truncate">Google · Bangalore · Hybrid · On-site</p>
-                                    </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className="text-[10px] font-bold text-emerald-500">92%</span>
-                                        <span className="text-[9px] text-slate-400">Match</span>
-                                    </div>
-                                    <button className="text-slate-300 hover:text-primary ml-2"><HiOutlineBookmark className="w-4 h-4" /></button>
-                                </div>
-                                
-                                <div className="flex items-center gap-4 group cursor-pointer">
-                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                                        <span className="font-bold text-lg text-slate-800">D</span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-xs font-bold text-slate-900 truncate group-hover:text-primary transition-colors">Data Analyst</h3>
-                                        <p className="text-[10px] text-slate-500 mt-0.5 truncate">Deloitte · Hyderabad · Full-time</p>
-                                    </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className="text-[10px] font-bold text-emerald-500">88%</span>
-                                        <span className="text-[9px] text-slate-400">Match</span>
-                                    </div>
-                                    <button className="text-slate-300 hover:text-primary ml-2"><HiOutlineBookmark className="w-4 h-4" /></button>
-                                </div>
-                                
-                                <div className="flex items-center gap-4 group cursor-pointer">
-                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                                        <div className="flex gap-0.5">
-                                            <span className="w-1.5 h-1.5 rounded-sm bg-red-500"></span>
-                                            <span className="w-1.5 h-1.5 rounded-sm bg-green-500"></span>
-                                            <span className="w-1.5 h-1.5 rounded-sm bg-yellow-500"></span>
+                                {topJobs.length > 0 ? topJobs.map((job, i) => (
+                                    <div key={i} className="flex items-center gap-4 group cursor-pointer" onClick={() => window.location.href='/job-board'}>
+                                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                                            <span className="font-bold text-lg text-slate-800">{job.company?.charAt(0) || 'C'}</span>
                                         </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-xs font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{job.title}</h3>
+                                            <p className="text-[10px] text-slate-500 mt-0.5 truncate">{job.company} · {job.location} · {job.type}</p>
+                                        </div>
+                                        <button className="text-slate-300 hover:text-primary ml-2"><HiOutlineArrowUpRight className="w-4 h-4" /></button>
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-xs font-bold text-slate-900 truncate group-hover:text-primary transition-colors">Frontend Developer</h3>
-                                        <p className="text-[10px] text-slate-500 mt-0.5 truncate">Zoho · Chennai · Full-time</p>
-                                    </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span className="text-[10px] font-bold text-emerald-500">85%</span>
-                                        <span className="text-[9px] text-slate-400">Match</span>
-                                    </div>
-                                    <button className="text-slate-300 hover:text-primary ml-2"><HiOutlineBookmark className="w-4 h-4" /></button>
-                                </div>
+                                )) : (
+                                    <p className="text-xs text-slate-500 text-center py-4">No new jobs posted yet.</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -430,50 +384,24 @@ const Dashboard = () => {
                             <a href="#" className="text-xs font-bold text-primary hover:underline">View All</a>
                         </div>
                         <div className="space-y-4">
-                            <div className="flex gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group cursor-pointer">
-                                <div className="flex flex-col items-center justify-center w-12 h-12 bg-primary/10 rounded-xl text-primary shrink-0">
-                                    <span className="text-sm font-black">15</span>
-                                    <span className="text-[9px] font-bold uppercase tracking-wider">May</span>
-                                </div>
-                                <div className="flex-1 min-w-0 pt-0.5">
-                                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-primary transition-colors">Hackathon 2024</h3>
-                                    <p className="text-[10px] text-slate-500 mt-0.5">Campus Hackathon</p>
-                                    <div className="flex items-center gap-1 mt-1 text-[9px] text-slate-400">
-                                        <HiOutlineClock className="w-3 h-3" /> 10:00 AM - 5:00 PM
+                            {requests.filter(r => r.status === 'accepted').length > 0 ? requests.filter(r => r.status === 'accepted').slice(0, 3).map((req, i) => (
+                                <div key={i} className="flex gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group cursor-pointer">
+                                    <div className="flex flex-col items-center justify-center w-12 h-12 bg-primary/10 rounded-xl text-primary shrink-0">
+                                        <span className="text-sm font-black">{req.scheduledDate ? new Date(req.scheduledDate).getDate() : '?'}</span>
+                                        <span className="text-[9px] font-bold uppercase tracking-wider">{req.scheduledDate ? new Date(req.scheduledDate).toLocaleString('default', { month: 'short' }) : 'TBA'}</span>
                                     </div>
-                                </div>
-                                <button className="text-slate-300 hover:text-primary self-center"><HiOutlineBookmark className="w-4 h-4" /></button>
-                            </div>
-                            
-                            <div className="flex gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group cursor-pointer">
-                                <div className="flex flex-col items-center justify-center w-12 h-12 bg-orange-500/10 rounded-xl text-orange-600 shrink-0">
-                                    <span className="text-sm font-black">18</span>
-                                    <span className="text-[9px] font-bold uppercase tracking-wider">May</span>
-                                </div>
-                                <div className="flex-1 min-w-0 pt-0.5">
-                                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-primary transition-colors">Alumni Talk</h3>
-                                    <p className="text-[10px] text-slate-500 mt-0.5">Career Guidance Session</p>
-                                    <div className="flex items-center gap-1 mt-1 text-[9px] text-slate-400">
-                                        <HiOutlineClock className="w-3 h-3" /> 2:00 PM - 4:00 PM
+                                    <div className="flex-1 min-w-0 pt-0.5">
+                                        <h3 className="text-xs font-bold text-slate-900 group-hover:text-primary transition-colors">Mentoring with {req.mentorId?.name || 'Mentor'}</h3>
+                                        <p className="text-[10px] text-slate-500 mt-0.5">{req.topic || 'Career Guidance'}</p>
+                                        <div className="flex items-center gap-1 mt-1 text-[9px] text-slate-400">
+                                            <HiOutlineClock className="w-3 h-3" /> {req.scheduledTime || 'TBA'}
+                                        </div>
                                     </div>
+                                    <button className="text-slate-300 hover:text-primary self-center"><HiOutlineBookmark className="w-4 h-4" /></button>
                                 </div>
-                                <button className="text-slate-300 hover:text-primary self-center"><HiOutlineBookmark className="w-4 h-4" /></button>
-                            </div>
-                            
-                            <div className="flex gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group cursor-pointer">
-                                <div className="flex flex-col items-center justify-center w-12 h-12 bg-emerald-500/10 rounded-xl text-emerald-600 shrink-0">
-                                    <span className="text-sm font-black">20</span>
-                                    <span className="text-[9px] font-bold uppercase tracking-wider">May</span>
-                                </div>
-                                <div className="flex-1 min-w-0 pt-0.5">
-                                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-primary transition-colors">Resume Workshop</h3>
-                                    <p className="text-[10px] text-slate-500 mt-0.5">Placement Cell</p>
-                                    <div className="flex items-center gap-1 mt-1 text-[9px] text-slate-400">
-                                        <HiOutlineClock className="w-3 h-3" /> 11:00 AM - 1:00 PM
-                                    </div>
-                                </div>
-                                <button className="text-slate-300 hover:text-primary self-center"><HiOutlineBookmark className="w-4 h-4" /></button>
-                            </div>
+                            )) : (
+                                <p className="text-xs text-slate-500 text-center py-4">No upcoming events or sessions.</p>
+                            )}
                         </div>
                         <button className="text-[11px] font-bold text-primary mt-4 flex items-center gap-1 hover:underline">View All Events <HiOutlineArrowUpRight className="w-3 h-3" /></button>
                     </div>
@@ -485,14 +413,14 @@ const Dashboard = () => {
                         </div>
                         <div className="flex justify-between items-end">
                             <div>
-                                <span className="text-3xl font-black text-slate-900">7</span>
+                                <span className="text-3xl font-black text-slate-900">{user?.loginStreak || 1}</span>
                                 <span className="text-xs font-bold text-slate-500 ml-1">Days</span>
                             </div>
                             <span className="text-[10px] font-bold text-slate-600">Keep it up! 🔥</span>
                         </div>
                         <div className="flex justify-between mt-4">
                             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
-                                <div key={idx} className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${idx < 5 ? 'bg-primary text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                <div key={idx} className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold ${idx < Math.min((user?.loginStreak || 1), 7) ? 'bg-primary text-white' : 'bg-slate-100 text-slate-400'}`}>
                                     {day}
                                 </div>
                             ))}
@@ -509,24 +437,21 @@ const Dashboard = () => {
                                     <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-primary" strokeWidth="3" strokeDasharray="100" strokeDashoffset="22" strokeLinecap="round"></circle>
                                 </svg>
                                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                                    <span className="text-xl font-black text-slate-900">78%</span>
+                                    <span className="text-xl font-black text-slate-900">{profileProgress}%</span>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 w-full text-left">
                                 <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
-                                    <span className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary/10 rounded flex items-center justify-center"><HiOutlineCheck className="w-2 h-2 text-primary" /></div> Add Skills</span>
-                                    <HiOutlineCheck className="w-3 h-3 text-emerald-500" />
+                                    <span className="flex items-center gap-1.5"><div className={`w-3 h-3 ${user?.skills?.length ? 'bg-primary/10 text-primary' : 'border border-slate-300'} rounded flex items-center justify-center`}>{user?.skills?.length ? <HiOutlineCheck className="w-2 h-2" /> : ''}</div> Add Skills</span>
                                 </div>
                                 <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
-                                    <span className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary/10 rounded flex items-center justify-center"><HiOutlineCheck className="w-2 h-2 text-primary" /></div> Add Projects</span>
-                                    <HiOutlineCheck className="w-3 h-3 text-emerald-500" />
+                                    <span className="flex items-center gap-1.5"><div className={`w-3 h-3 ${user?.experience?.length ? 'bg-primary/10 text-primary' : 'border border-slate-300'} rounded flex items-center justify-center`}>{user?.experience?.length ? <HiOutlineCheck className="w-2 h-2" /> : ''}</div> Add Experience</span>
                                 </div>
                                 <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
-                                    <span className="flex items-center gap-1.5"><div className="w-3 h-3 bg-primary/10 rounded flex items-center justify-center"><HiOutlineCheck className="w-2 h-2 text-primary" /></div> Add Experience</span>
-                                    <HiOutlineCheck className="w-3 h-3 text-emerald-500" />
+                                    <span className="flex items-center gap-1.5"><div className={`w-3 h-3 ${user?.education?.length ? 'bg-primary/10 text-primary' : 'border border-slate-300'} rounded flex items-center justify-center`}>{user?.education?.length ? <HiOutlineCheck className="w-2 h-2" /> : ''}</div> Add Education</span>
                                 </div>
-                                <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
-                                    <span className="flex items-center gap-1.5"><div className="w-3 h-3 border border-slate-300 rounded"></div> Add Certifications</span>
+                                <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                                    <span className="flex items-center gap-1.5"><div className={`w-3 h-3 ${user?.profilePhoto ? 'bg-primary/10 text-primary' : 'border border-slate-300'} rounded flex items-center justify-center`}>{user?.profilePhoto ? <HiOutlineCheck className="w-2 h-2" /> : ''}</div> Add Profile Photo</span>
                                 </div>
                             </div>
                         </div>
@@ -542,15 +467,15 @@ const Dashboard = () => {
                         <div className="space-y-3">
                             <div className="flex items-center gap-3">
                                 <span className="text-orange-500"><HiOutlineBriefcase className="w-4 h-4" /></span>
-                                <span className="text-xs font-bold text-slate-700">23 new job opportunities</span>
+                                <span className="text-xs font-bold text-slate-700">{topJobs.length > 0 ? `${topJobs.length}+ new job opportunities` : 'Explore job opportunities'}</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-blue-500"><HiOutlineNewspaper className="w-4 h-4" /></span>
-                                <span className="text-xs font-bold text-slate-700">12 new posts in Social Feed</span>
+                                <span className="text-xs font-bold text-slate-700">{recentPosts.length > 0 ? `${recentPosts.length}+ new posts in Social Feed` : 'Connect with peers on the feed'}</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="text-primary"><HiOutlineUserPlus className="w-4 h-4" /></span>
-                                <span className="text-xs font-bold text-slate-700">5 new alumni joined today</span>
+                                <span className="text-xs font-bold text-slate-700">{stats.activeMentors > 0 ? `${stats.activeMentors} alumni mentors available` : 'Connect with alumni mentors'}</span>
                             </div>
                         </div>
                     </div>
@@ -564,7 +489,7 @@ const Dashboard = () => {
                             <p className="text-[10px] text-white/80 mb-4 leading-relaxed">Get more visibility from mentors and recruiters.</p>
                             <div className="flex items-center justify-between">
                                 <a href="/profile" className="bg-white/20 hover:bg-white/30 transition-colors px-4 py-2 rounded-lg text-xs font-bold backdrop-blur-md">Complete Now →</a>
-                                <span className="text-2xl font-black opacity-50">82%</span>
+                                <span className="text-2xl font-black opacity-50">{profileProgress}%</span>
                             </div>
                         </div>
                     </div>

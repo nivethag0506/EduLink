@@ -100,7 +100,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         </div>
                         <div>
                             <h1 className="text-sm font-bold text-slate-900 tracking-tight leading-tight line-clamp-2">CampusBridge</h1>
-                            <p className="text-[10px] text-primary font-bold tracking-wide uppercase mt-0.5">Connect · Learn · Grow</p>
+                            <p className="text-[10px] text-primary font-bold tracking-wide uppercase mt-0.5">Connect â€¢ Learn â€¢ Grow</p>
                         </div>
                     </div>
                 </div>
@@ -110,11 +110,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 </nav>
 
                 <div className="p-4 border-t border-slate-100 bg-white">
-                    <div className="p-4 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl border border-primary/10 mb-4 text-center">
-                        <p className="text-xs font-bold text-slate-900 mb-1">Upgrade to Pro</p>
-                        <p className="text-[10px] text-slate-500 mb-3">Unlock premium features and boost visibility.</p>
-                        <button className="btn-primary w-full py-2 text-xs">Upgrade Now ?</button>
-                    </div>
+                    {/* Premium banner removed */}
                 </div>
             </aside>
         </>

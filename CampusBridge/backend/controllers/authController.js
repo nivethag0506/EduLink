@@ -111,11 +111,36 @@ const loginUser = async (req, res) => {
             if (!user.isVerified && user.role !== 'Admin') {
                 return res.status(403).json({ message: 'Account pending admin verification.' });
             }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let newStreak = user.loginStreak || 0;
+            if (user.lastLoginDate) {
+                const lastLogin = new Date(user.lastLoginDate);
+                lastLogin.setHours(0, 0, 0, 0);
+                const diffTime = today - lastLogin;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+                
+                if (diffDays === 1) {
+                    newStreak += 1;
+                } else if (diffDays > 1) {
+                    newStreak = 1;
+                }
+            } else {
+                newStreak = 1;
+            }
+            
+            user.loginStreak = newStreak;
+            user.lastLoginDate = new Date();
+            await user.save();
+
             res.json({
                 _id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                loginStreak: user.loginStreak,
                 collegeId: user.collegeId?._id || user.collegeId,
                 collegeName: user.collegeId?.name || '',
                 collegeLogo: user.collegeId?.logo || '',

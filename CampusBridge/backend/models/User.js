@@ -33,6 +33,8 @@ const userSchema = new mongoose.Schema({
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     followRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    loginStreak: { type: Number, default: 0 },
+    lastLoginDate: { type: Date },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
