@@ -1,8 +1,33 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-const storage = multer.diskStorage({
+if (process.env.CLOUDINARY_CLOUD_NAME) {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+}
+
+const useCloudinary = !!process.env.CLOUDINARY_CLOUD_NAME;
+
+const storage = useCloudinary ? new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: async (req, file) => {
+        let folderName = 'campusbridge_uploads';
+        if (req.body.collegeId) folderName += `/college_${req.body.collegeId}`;
+        else if (req.user && req.user.collegeId) folderName += `/college_${req.user.collegeId}`;
+        
+        return {
+            folder: folderName,
+            resource_type: 'auto',
+            public_id: `${file.fieldname}-${Date.now()}`
+        };
+    }
+}) : multer.diskStorage({
     destination(req, file, cb) {
         // Basic local fallback if Cloud Storage isn't wired fully
         let dir = 'uploads/';

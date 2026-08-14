@@ -1,0 +1,1 @@
+const mongoose = require("mongoose"); require("dotenv").config({path: "backend/.env"}); mongoose.connect(process.env.MONGO_URI).then(async () => { const User = require("./backend/models/User"); const u = await User.findOne({profilePhoto: {$exists: true, $ne: ""}}); console.log("PROFILE PHOTO:", u ? u.profilePhoto : "No user with photo"); process.exit(0); });
