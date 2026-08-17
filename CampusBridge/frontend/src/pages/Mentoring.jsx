@@ -9,7 +9,6 @@ import {
     HiOutlineSearch, HiOutlineAdjustmentsHorizontal, HiOutlineChevronRight,
     HiCheckBadge, HiEllipsisVertical, HiOutlineCalendarDays
 } from 'react-icons/hi2';
-import { format } from 'date-fns';
 
 const STATUS_COLORS = {
     pending: 'text-amber-600 bg-amber-50 border-amber-100',
@@ -351,7 +350,7 @@ const Mentoring = () => {
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 mb-3 bg-white p-2 rounded-lg border border-slate-100">
-                                                <span className="flex items-center gap-1 text-primary"><HiOutlineCalendar className="w-3.5 h-3.5" /> {session.scheduledDate ? format(new Date(session.scheduledDate), 'MMM dd, yyyy') : 'TBD'}</span>
+                                                <span className="flex items-center gap-1 text-primary"><HiOutlineCalendar className="w-3.5 h-3.5" /> {session.scheduledDate ? new Date(session.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}</span>
                                                 <span className="text-slate-300">•</span>
                                                 <span className="flex items-center gap-1"><HiOutlineClock className="w-3.5 h-3.5" /> {session.scheduledTime || 'TBD'}</span>
                                             </div>
