@@ -5,8 +5,8 @@ import toast from 'react-hot-toast';
 import { 
     HiOutlineAcademicCap, HiOutlineVideoCamera, HiOutlineMicrophone, 
     HiOutlineClock, HiOutlineCalendar, HiOutlineXCircle, HiOutlineCheckCircle,
-    HiOutlineUserGroup, HiOutlineShieldCheck, HiOutlineBan, HiOutlinePlus,
-    HiOutlineSearch, HiOutlineAdjustmentsHorizontal, HiOutlineChevronRight,
+    HiOutlineUserGroup, HiOutlineShieldCheck, HiOutlineNoSymbol, HiOutlinePlus,
+    HiOutlineMagnifyingGlass, HiOutlineAdjustmentsHorizontal, HiOutlineChevronRight,
     HiCheckBadge, HiEllipsisVertical, HiOutlineCalendarDays
 } from 'react-icons/hi2';
 
@@ -132,9 +132,9 @@ const Mentoring = () => {
                     { title: 'Accepted', count: acceptedCount, desc: 'Mentors connected', icon: HiOutlineShieldCheck, color: 'text-emerald-500' },
                     { title: 'Upcoming Sessions', count: upcomingCount, desc: 'Scheduled sessions', icon: HiOutlineCalendarDays, color: 'text-blue-500' },
                     { title: 'Completed', count: completedCount, desc: 'Sessions completed', icon: HiOutlineAcademicCap, color: 'text-purple-600' },
-                    { title: 'Rejected', count: rejectedCount, desc: 'Requests declined', icon: HiOutlineBan, color: 'text-rose-500' },
+                    { title: 'Rejected', count: rejectedCount, desc: 'Requests declined', icon: HiOutlineNoSymbol, color: 'text-rose-500' },
                 ].map((stat, idx) => (
-                    <div key={idx} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 transition-all duration-300">
+                    <div key={idx} className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_20px_-8px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 cursor-default">
                         <div className="flex items-start justify-between">
                             <div className="space-y-1">
                                 <p className="text-xs font-semibold text-slate-500">{stat.title}</p>
@@ -157,22 +157,22 @@ const Mentoring = () => {
                         <div className="flex gap-1 overflow-x-auto w-full md:w-auto hide-scrollbar p-1">
                             {['all', 'pending', 'accepted', 'upcoming', 'completed', 'rejected', 'as_student'].map(t => (
                                 <button key={t} onClick={() => setTab(t)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 capitalize cursor-pointer whitespace-nowrap ${tab === t ? 'bg-primary text-white shadow-md' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'}`}>
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 capitalize cursor-pointer whitespace-nowrap active:scale-[0.97] ${tab === t ? 'bg-primary text-white shadow-md' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'}`}>
                                     {t.replace('_', ' ')}
                                 </button>
                             ))}
                         </div>
-                        <div className="flex items-center gap-3 w-full md:w-auto px-2 pb-2 md:pb-0 md:pr-2">
+                        <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto hide-scrollbar px-2 pb-2 md:pb-0 md:pr-2">
                             <div className="relative w-full md:w-64">
-                                <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                                <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                                 <input type="text" placeholder="Search people, topics..." 
                                     value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                                     className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs w-full focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-slate-400" />
                             </div>
-                            <button className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all hover:scale-[0.98] cursor-pointer">
+                            <button className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap">
                                 Sort by: Recent <HiOutlineChevronRight className="w-3 h-3 rotate-90" />
                             </button>
-                            <button className="flex items-center justify-center w-9 h-9 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all hover:scale-[0.98] cursor-pointer shrink-0">
+                            <button className="flex items-center justify-center w-9 h-9 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shrink-0">
                                 <HiOutlineAdjustmentsHorizontal className="w-4 h-4" />
                             </button>
                         </div>
@@ -190,8 +190,8 @@ const Mentoring = () => {
                                         <HiOutlineUserGroup className="w-8 h-8 text-primary" />
                                     </div>
                                     <h3 className="text-slate-800 font-bold mb-2">No mentoring sessions yet</h3>
-                                    <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">Connect with experienced alumni and start your mentoring journey to achieve your goals.</p>
-                                    <button className="btn-primary bg-primary hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md shadow-primary/20 cursor-pointer">
+                                    <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">Connect with experienced alumni and start your mentoring journey.</p>
+                                    <button className="btn-primary bg-primary hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] shadow-md shadow-primary/20 cursor-pointer">
                                         Find a Mentor
                                     </button>
                                 </div>
@@ -202,7 +202,7 @@ const Mentoring = () => {
                                     const skills = other?.skills || [];
                                     
                                     return (
-                                        <div key={r._id} className="p-6 hover:bg-slate-50/50 transition-colors flex flex-col md:flex-row md:items-center gap-6">
+                                        <div key={r._id} className="p-6 hover:bg-slate-50/50 transition-all hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 flex flex-col md:flex-row md:items-center gap-6">
                                             {/* User Info */}
                                             <div className="flex items-center gap-4 min-w-[240px]">
                                                 <div className="relative">
@@ -270,31 +270,31 @@ const Mentoring = () => {
                                             <div className="flex flex-col gap-2 min-w-[130px] items-end">
                                                 {r.status === 'pending' && r.mentorId?._id === user?._id ? (
                                                     <>
-                                                        <button onClick={() => openAcceptModal(r._id)} className="w-full text-center px-4 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer border border-emerald-100 hover:border-emerald-500">
+                                                        <button onClick={() => openAcceptModal(r._id)} className="w-full text-center px-4 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer border border-emerald-100 hover:border-emerald-500">
                                                             Accept
                                                         </button>
-                                                        <button onClick={() => openRejectModal(r._id)} className="w-full text-center px-4 py-1.5 bg-white text-slate-500 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-xs font-bold transition-colors cursor-pointer border border-slate-200">
+                                                        <button onClick={() => openRejectModal(r._id)} className="w-full text-center px-4 py-1.5 bg-white text-slate-500 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer border border-slate-200">
                                                             Decline
                                                         </button>
                                                     </>
                                                 ) : r.status === 'accepted' ? (
                                                     <>
-                                                        <a href={`/call/${r.meetLink?.split('/').pop()}`} className="w-full text-center px-4 py-1.5 bg-primary text-white hover:bg-primary-dark rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm">
+                                                        <a href={`/call/${r.meetLink?.split('/').pop()}`} className="block w-full text-center px-4 py-1.5 bg-primary text-white hover:bg-primary-dark rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer shadow-sm">
                                                             Join Call
                                                         </a>
                                                         {r.mentorId?._id === user?._id && (
-                                                            <button onClick={() => handleComplete(r._id)} className="w-full text-center px-4 py-1.5 bg-white text-slate-500 hover:bg-slate-50 rounded-lg text-[10px] font-bold transition-colors cursor-pointer border border-slate-200">
+                                                            <button onClick={() => handleComplete(r._id)} className="w-full text-center px-4 py-1.5 bg-white text-slate-500 hover:bg-slate-50 rounded-lg text-[10px] font-bold transition-all active:scale-[0.97] cursor-pointer border border-slate-200">
                                                                 Mark Complete
                                                             </button>
                                                         )}
                                                     </>
                                                 ) : (
-                                                    <a href={`/profile/${other?._id}`} className="w-full text-center px-4 py-1.5 bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold transition-colors cursor-pointer">
+                                                    <a href={`/profile/${other?._id}`} className="block w-full text-center px-4 py-1.5 bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer">
                                                         View Profile
                                                     </a>
                                                 )}
                                                 {r.status === 'rejected' && r.rejectionReason && (
-                                                    <button onClick={() => toast(r.rejectionReason, { icon: 'ℹ️' })} className="w-full text-center px-4 py-1.5 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-lg text-[10px] font-bold transition-colors cursor-pointer">
+                                                    <button onClick={() => toast(r.rejectionReason, { icon: 'ℹ️' })} className="w-full text-center px-4 py-1.5 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-lg text-[10px] font-bold transition-all active:scale-[0.97] cursor-pointer">
                                                         View Reason
                                                     </button>
                                                 )}
@@ -392,8 +392,28 @@ const Mentoring = () => {
                             ))}
                         </div>
                         
-                        <button className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-colors text-xs font-bold cursor-pointer">
+                        <button className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-all active:scale-[0.97] text-xs font-bold cursor-pointer">
                             <HiOutlineAcademicCap className="w-4 h-4" /> How it works?
+                        </button>
+                    </div>
+
+                    {/* Mentor Discovery CTA */}
+                    <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-6 border border-primary/10 shadow-sm relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
+                            <HiOutlineMagnifyingGlass className="w-24 h-24 text-primary rotate-12" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-900 mb-2 relative z-10">Looking for the right mentor?</h3>
+                        <p className="text-xs text-slate-600 mb-4 relative z-10">
+                            Explore alumni based on:
+                        </p>
+                        <ul className="text-[10px] text-slate-500 font-semibold mb-5 space-y-1.5 relative z-10">
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> skills</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> company</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> experience</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> domain</li>
+                        </ul>
+                        <button className="w-full bg-white text-primary hover:bg-slate-50 border border-primary/20 py-2.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-sm relative z-10 cursor-pointer">
+                            Explore Mentors
                         </button>
                     </div>
 

@@ -39,5 +39,5 @@ __pycache__/
 *.pyd
 
 # Uploads
-uploads/
-/CampusBridge/backend/uploads/
+# uploads/
+# /CampusBridge/backend/uploads/
