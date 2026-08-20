@@ -157,10 +157,40 @@ const Mentoring = () => {
             </div>
 
             {/* Main Layout */}
-            <div className="flex flex-col xl:flex-row gap-8 items-start">
-                
-                {/* Left Column: List */}
-                <div className="flex-1 min-w-0 w-full space-y-6 self-start">
+            {requests.length === 0 ? (
+                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-12 text-center animate-fade-in-up">
+                    <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+                        <HiOutlineUserGroup className="w-10 h-10 text-primary" />
+                    </div>
+                    <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Welcome to your Mentoring Journey!</h2>
+                    <p className="text-slate-500 max-w-lg mx-auto mb-10 leading-relaxed text-sm">
+                        You haven't requested any mentoring sessions yet. Connect with experienced alumni, learn from their journey, and accelerate your career.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
+                        {[
+                            { step: '1', title: 'Find a Mentor', desc: 'Browse the directory by skills or domain.' },
+                            { step: '2', title: 'Send Request', desc: 'Write a brief message about your goals.' },
+                            { step: '3', title: 'Schedule Call', desc: 'Find a time that works for both of you.' },
+                            { step: '4', title: 'Grow Together', desc: 'Gain insights and achieve your goals.' }
+                        ].map((s, i) => (
+                            <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 relative group hover:bg-primary/5 transition-colors text-left">
+                                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs mb-3 shadow-md">{s.step}</div>
+                                <h4 className="font-bold text-slate-900 text-sm mb-1">{s.title}</h4>
+                                <p className="text-[10px] text-slate-500 leading-relaxed">{s.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <Link to="/directory" className="inline-flex items-center gap-2 bg-primary hover:bg-[#5b21b6] text-white px-8 py-3.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-1 active:scale-[0.97] shadow-xl shadow-primary/30 cursor-pointer decoration-transparent">
+                        <HiOutlineMagnifyingGlass className="w-5 h-5" /> Explore Alumni Directory
+                    </Link>
+                </div>
+            ) : (
+                <div className="flex flex-col xl:flex-row gap-8 items-start">
+                    
+                    {/* Left Column: List */}
+                    <div className="flex-1 min-w-0 w-full space-y-6 self-start">
                     {/* Controls Row */}
                     <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
                         <div className="flex gap-1 overflow-x-auto w-full md:w-auto hide-scrollbar p-1">
@@ -443,7 +473,7 @@ const Mentoring = () => {
                     </div>
 
                 </div>
-            </div>
+            )}
 
             {/* Accept Modal */}
             {acceptModalId && (
