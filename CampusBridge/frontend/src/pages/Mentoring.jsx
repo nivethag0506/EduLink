@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -23,6 +24,7 @@ const Mentoring = () => {
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+    const [sortBy, setSortBy] = useState('recent');
 
     // Modal states
     const [acceptModalId, setAcceptModalId] = useState(null);
@@ -110,6 +112,11 @@ const Mentoring = () => {
         return other?.name?.toLowerCase().includes(searchLower) || r.topic?.toLowerCase().includes(searchLower);
     });
 
+    filtered.sort((a, b) => {
+        if (sortBy === 'recent') return new Date(b.createdAt) - new Date(a.createdAt);
+        return new Date(a.createdAt) - new Date(b.createdAt);
+    });
+
     if (loading) return <div className="text-center py-20 text-slate-500">Loading sessions...</div>;
 
     return (
@@ -120,9 +127,9 @@ const Mentoring = () => {
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Mentorship</h1>
                     <p className="text-slate-500 text-sm mt-1">Manage your mentoring requests and sessions all in one place.</p>
                 </div>
-                <button className="btn-primary bg-primary hover:bg-[#5b21b6] transition-all hover:-translate-y-0.5 active:scale-[0.98] text-sm py-2.5 px-6 rounded-xl shadow-lg shadow-primary/25 flex items-center gap-2 border-0 cursor-pointer text-white font-medium">
+                <Link to="/directory" className="btn-primary bg-primary hover:bg-[#5b21b6] transition-all hover:-translate-y-0.5 active:scale-[0.98] text-sm py-2.5 px-6 rounded-xl shadow-lg shadow-primary/25 flex items-center gap-2 border-0 cursor-pointer text-white font-medium decoration-transparent">
                     <HiOutlinePlus className="w-4 h-4" /> Request Mentoring
-                </button>
+                </Link>
             </div>
 
             {/* Summary Cards */}
@@ -169,10 +176,10 @@ const Mentoring = () => {
                                     value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                                     className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs w-full focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-slate-400" />
                             </div>
-                            <button className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap">
-                                Sort by: Recent <HiOutlineChevronRight className="w-3 h-3 rotate-90" />
+                            <button onClick={() => setSortBy(prev => prev === 'recent' ? 'oldest' : 'recent')} className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap">
+                                Sort by: {sortBy === 'recent' ? 'Recent' : 'Oldest'} <HiOutlineChevronRight className={`w-3 h-3 transition-transform ${sortBy === 'recent' ? 'rotate-90' : '-rotate-90'}`} />
                             </button>
-                            <button className="flex items-center justify-center w-9 h-9 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shrink-0">
+                            <button onClick={() => toast('Advanced filters are applied automatically based on tabs and search.', { icon: '🔍' })} className="flex items-center justify-center w-9 h-9 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shrink-0">
                                 <HiOutlineAdjustmentsHorizontal className="w-4 h-4" />
                             </button>
                         </div>
@@ -191,9 +198,9 @@ const Mentoring = () => {
                                     </div>
                                     <h3 className="text-slate-800 font-bold mb-2">No mentoring sessions yet</h3>
                                     <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">Connect with experienced alumni and start your mentoring journey.</p>
-                                    <button className="btn-primary bg-primary hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] shadow-md shadow-primary/20 cursor-pointer">
+                                    <Link to="/directory" className="inline-block bg-primary hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] shadow-md shadow-primary/20 cursor-pointer decoration-transparent">
                                         Find a Mentor
-                                    </button>
+                                    </Link>
                                 </div>
                             ) : (
                                 filtered.map(r => {
@@ -321,7 +328,7 @@ const Mentoring = () => {
                             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                 <HiOutlineCalendarDays className="w-5 h-5 text-primary" /> Upcoming Sessions
                             </h3>
-                            <button className="text-[10px] font-bold text-primary hover:underline cursor-pointer">View Calendar</button>
+                            <Link to="/sessions" className="text-[10px] font-bold text-primary hover:underline cursor-pointer">View Calendar</Link>
                         </div>
 
                         {upcomingSessions.length === 0 ? (
@@ -331,9 +338,9 @@ const Mentoring = () => {
                                 </div>
                                 <p className="text-sm font-bold text-slate-800">No upcoming sessions</p>
                                 <p className="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">You don't have any sessions scheduled right now.</p>
-                                <button className="w-full btn-primary bg-primary hover:bg-[#5b21b6] text-white py-2 rounded-xl text-xs font-bold shadow-md cursor-pointer transition-transform hover:-translate-y-0.5 border-0">
+                                <Link to="/directory" className="block w-full bg-primary hover:bg-[#5b21b6] text-white py-2 rounded-xl text-xs font-bold shadow-md cursor-pointer transition-transform hover:-translate-y-0.5 border-0 decoration-transparent">
                                     Find a Mentor
-                                </button>
+                                </Link>
                             </div>
                         ) : (
                             <div className="space-y-4">
@@ -392,7 +399,7 @@ const Mentoring = () => {
                             ))}
                         </div>
                         
-                        <button className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-all active:scale-[0.97] text-xs font-bold cursor-pointer">
+                        <button onClick={() => toast('1. Connect in Directory\n2. Wait for Acceptance\n3. Mentor schedules a call\n4. Join and Grow together!', { duration: 6000, icon: '🚀' })} className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-all active:scale-[0.97] text-xs font-bold cursor-pointer">
                             <HiOutlineAcademicCap className="w-4 h-4" /> How it works?
                         </button>
                     </div>
@@ -412,9 +419,9 @@ const Mentoring = () => {
                             <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> experience</li>
                             <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> domain</li>
                         </ul>
-                        <button className="w-full bg-white text-primary hover:bg-slate-50 border border-primary/20 py-2.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-sm relative z-10 cursor-pointer">
+                        <Link to="/directory" className="block text-center w-full bg-white text-primary hover:bg-slate-50 border border-primary/20 py-2.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-sm relative z-10 cursor-pointer decoration-transparent">
                             Explore Mentors
-                        </button>
+                        </Link>
                     </div>
 
                 </div>
