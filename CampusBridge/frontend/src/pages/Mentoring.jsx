@@ -157,71 +157,38 @@ const Mentoring = () => {
             </div>
 
             {/* Main Layout */}
-            {requests.length === 0 ? (
-                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 md:p-12 text-center animate-fade-in-up">
-                    <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-                        <HiOutlineUserGroup className="w-10 h-10 text-primary" />
-                    </div>
-                    <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Welcome to your Mentoring Journey!</h2>
-                    <p className="text-slate-500 max-w-lg mx-auto mb-10 leading-relaxed text-sm">
-                        You haven't requested any mentoring sessions yet. Connect with experienced alumni, learn from their journey, and accelerate your career.
-                    </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
-                        {[
-                            { step: '1', title: 'Find a Mentor', desc: 'Browse the directory by skills or domain.' },
-                            { step: '2', title: 'Send Request', desc: 'Write a brief message about your goals.' },
-                            { step: '3', title: 'Schedule Call', desc: 'Find a time that works for both of you.' },
-                            { step: '4', title: 'Grow Together', desc: 'Gain insights and achieve your goals.' }
-                        ].map((s, i) => (
-                            <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 relative group hover:bg-primary/5 transition-colors text-left">
-                                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs mb-3 shadow-md">{s.step}</div>
-                                <h4 className="font-bold text-slate-900 text-sm mb-1">{s.title}</h4>
-                                <p className="text-[10px] text-slate-500 leading-relaxed">{s.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <Link to="/directory" className="inline-flex items-center gap-2 bg-primary hover:bg-[#5b21b6] text-white px-8 py-3.5 rounded-xl text-sm font-bold transition-all hover:-translate-y-1 active:scale-[0.97] shadow-xl shadow-primary/30 cursor-pointer decoration-transparent">
-                        <HiOutlineMagnifyingGlass className="w-5 h-5" /> Explore Alumni Directory
-                    </Link>
-                </div>
-            ) : (
-                <div className="flex flex-col xl:flex-row gap-8 items-start">
-                    
-                    {/* Left Column: List */}
-                    <div className="flex-1 min-w-0 w-full space-y-6 self-start">
+            <div className="flex flex-col xl:flex-row gap-8 items-start">
+                
+                {/* Left Column: List */}
+                <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
                     {/* Controls Row */}
-                    <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
-                        <div className="flex gap-1 overflow-x-auto w-full md:w-auto hide-scrollbar p-1">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div className="flex gap-2 overflow-x-auto w-full sm:w-auto hide-scrollbar">
                             {['all', 'pending', 'accepted', 'upcoming', 'completed', 'rejected', 'as_student'].map(t => (
                                 <button key={t} onClick={() => setTab(t)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 capitalize cursor-pointer whitespace-nowrap active:scale-[0.97] ${tab === t ? 'bg-primary text-white shadow-md' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'}`}>
+                                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 capitalize cursor-pointer whitespace-nowrap active:scale-[0.97] border-0 ${tab === t ? 'bg-[#5b21b6] text-white shadow-md' : 'bg-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'}`}>
                                     {t.replace('_', ' ')}
                                 </button>
                             ))}
                         </div>
-                        <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto hide-scrollbar px-2 pb-2 md:pb-0 md:pr-2">
-                            <div className="relative w-full md:w-64">
-                                <HiOutlineMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                                <input type="text" placeholder="Search people, topics..." 
-                                    value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs w-full focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-slate-400" />
-                            </div>
+                        <div className="flex items-center gap-3">
                             <div className="relative">
-                                <button onClick={() => setShowSortMenu(!showSortMenu)} onBlur={() => setTimeout(() => setShowSortMenu(false), 200)} className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap">
-                                    Sort by: {sortBy === 'recent' ? 'Recent' : 'Oldest'} <HiOutlineChevronRight className={`w-3 h-3 transition-transform ${showSortMenu ? 'rotate-90' : 'rotate-0'}`} />
+                                <button onClick={() => setShowSortMenu(!showSortMenu)} onBlur={() => setTimeout(() => setShowSortMenu(false), 200)} className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap shadow-sm">
+                                    Sort by: {sortBy === 'recent' ? 'Recent' : 'Oldest'} 
+                                    <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
                                 </button>
                                 {showSortMenu && (
-                                    <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-100 rounded-xl shadow-lg z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                    <div className="absolute right-0 mt-2 w-36 bg-white border border-slate-100 rounded-xl shadow-lg z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2">
                                         <button onClick={() => { setSortBy('recent'); setShowSortMenu(false); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer border-0 bg-transparent">Newest</button>
                                         <button onClick={() => { setSortBy('oldest'); setShowSortMenu(false); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer border-0 bg-transparent">Oldest</button>
                                     </div>
                                 )}
                             </div>
                             <div className="relative">
-                                <button onClick={() => setShowFilterMenu(!showFilterMenu)} onBlur={() => setTimeout(() => setShowFilterMenu(false), 200)} className={`flex items-center justify-center w-9 h-9 bg-white border ${showFilterMenu ? 'border-primary text-primary' : 'border-slate-200 text-slate-600'} rounded-xl hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shrink-0`}>
-                                    <HiOutlineAdjustmentsHorizontal className="w-4 h-4" />
+                                <button onClick={() => setShowFilterMenu(!showFilterMenu)} onBlur={() => setTimeout(() => setShowFilterMenu(false), 200)} className={`flex items-center gap-2 px-4 py-2 bg-white border ${showFilterMenu ? 'border-[#5b21b6] text-[#5b21b6]' : 'border-slate-200 text-slate-600'} rounded-xl hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shadow-sm`}>
+                                    <HiOutlineAdjustmentsHorizontal className="w-4 h-4" /> Filters
                                 </button>
                                 {showFilterMenu && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-lg z-20 p-3 animate-in fade-in slide-in-from-top-2">
@@ -241,12 +208,12 @@ const Mentoring = () => {
                         <div className="divide-y divide-slate-50">
                             {filtered.length === 0 ? (
                                 <div className="text-center py-12 px-6">
-                                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <HiOutlineUserGroup className="w-8 h-8 text-primary" />
+                                    <div className="w-16 h-16 bg-[#5b21b6]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <HiOutlineUserGroup className="w-8 h-8 text-[#5b21b6]" />
                                     </div>
                                     <h3 className="text-slate-800 font-bold mb-2">No mentoring sessions yet</h3>
                                     <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">Connect with experienced alumni and start your mentoring journey.</p>
-                                    <Link to="/directory" className="inline-block bg-primary hover:bg-[#5b21b6] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] shadow-md shadow-primary/20 cursor-pointer decoration-transparent">
+                                    <Link to="/directory" className="inline-block bg-[#5b21b6] hover:bg-[#4c1d95] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] shadow-md shadow-[#5b21b6]/20 cursor-pointer decoration-transparent border-0">
                                         Find a Mentor
                                     </Link>
                                 </div>
@@ -257,12 +224,12 @@ const Mentoring = () => {
                                     const skills = other?.skills || [];
                                     
                                     return (
-                                        <div key={r._id} className="p-6 hover:bg-slate-50/50 transition-all hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 flex flex-col md:flex-row md:items-center gap-6">
+                                        <div key={r._id} className="p-6 hover:bg-slate-50/50 transition-all hover:shadow-[0_4px_12px_-4px_rgba(0,0,0,0.05)] flex flex-col md:flex-row md:items-center gap-6">
                                             {/* User Info */}
                                             <div className="flex items-center gap-4 min-w-[240px]">
                                                 <div className="relative">
                                                     <img
-                                                        src={other?.profilePhoto ? `/${other.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff`}
+                                                        src={other?.profilePhoto ? `/${other.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=5b21b6&color=fff`}
                                                         className="w-12 h-12 rounded-full object-cover shadow-sm border border-slate-100"
                                                         alt=""
                                                     />
@@ -288,12 +255,12 @@ const Mentoring = () => {
                                                 <p className="text-[10px] text-slate-400 font-semibold mb-2">EXPERTISE / TOPIC</p>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {skills.slice(0, 3).map((s, i) => (
-                                                        <span key={i} className="px-2 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-bold">
+                                                        <span key={i} className="px-2 py-1 bg-[#5b21b6]/10 text-[#5b21b6] rounded-lg text-[10px] font-bold">
                                                             {s}
                                                         </span>
                                                     ))}
                                                     {skills.length === 0 && (
-                                                        <span className="px-2 py-1 bg-primary/10 text-primary rounded-lg text-[10px] font-bold truncate max-w-[150px]">
+                                                        <span className="px-2 py-1 bg-[#5b21b6]/10 text-[#5b21b6] rounded-lg text-[10px] font-bold truncate max-w-[150px]">
                                                             {r.topic}
                                                         </span>
                                                     )}
@@ -334,7 +301,7 @@ const Mentoring = () => {
                                                     </>
                                                 ) : r.status === 'accepted' ? (
                                                     <>
-                                                        <a href={`/call/${r.meetLink?.split('/').pop()}`} className="block w-full text-center px-4 py-1.5 bg-primary text-white hover:bg-primary-dark rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer shadow-sm">
+                                                        <a href={`/call/${r.meetLink?.split('/').pop()}`} className="block w-full text-center px-4 py-1.5 bg-[#5b21b6] text-white hover:bg-[#4c1d95] rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer shadow-sm decoration-transparent border-0">
                                                             Join Call
                                                         </a>
                                                         {r.mentorId?._id === user?._id && (
@@ -344,19 +311,19 @@ const Mentoring = () => {
                                                         )}
                                                     </>
                                                 ) : (
-                                                    <a href={`/profile/${other?._id}`} className="block w-full text-center px-4 py-1.5 bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer">
+                                                    <a href={`/profile/${other?._id}`} className="block w-full text-center px-4 py-1.5 bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold transition-all active:scale-[0.97] cursor-pointer decoration-transparent">
                                                         View Profile
                                                     </a>
                                                 )}
                                                 {r.status === 'rejected' && r.rejectionReason && (
-                                                    <button onClick={() => toast(r.rejectionReason, { icon: 'ℹ️' })} className="w-full text-center px-4 py-1.5 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-lg text-[10px] font-bold transition-all active:scale-[0.97] cursor-pointer">
+                                                    <button onClick={() => toast(r.rejectionReason, { icon: 'ℹ️' })} className="w-full text-center px-4 py-1.5 bg-slate-50 text-slate-500 hover:bg-slate-100 rounded-lg text-[10px] font-bold transition-all active:scale-[0.97] cursor-pointer border-0">
                                                         View Reason
                                                     </button>
                                                 )}
                                             </div>
 
                                             {/* Menu */}
-                                            <button className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-slate-100 cursor-pointer">
+                                            <button className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-slate-100 cursor-pointer border-0 bg-transparent">
                                                 <HiEllipsisVertical className="w-5 h-5" />
                                             </button>
                                         </div>
@@ -371,12 +338,12 @@ const Mentoring = () => {
                 <div className="w-full xl:w-[320px] shrink-0 space-y-6">
                     {/* Upcoming Sessions Card */}
                     <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-blue-400"></div>
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#5b21b6] to-blue-400"></div>
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                <HiOutlineCalendarDays className="w-5 h-5 text-primary" /> Upcoming Sessions
+                                <HiOutlineCalendarDays className="w-5 h-5 text-[#5b21b6]" /> Upcoming Sessions
                             </h3>
-                            <button onClick={() => toast('Calendar Sync coming in the next update!', {icon: '📅'})} className="text-[10px] font-bold text-primary hover:underline cursor-pointer bg-transparent border-0">View Calendar</button>
+                            <Link to="/sessions" className="text-[10px] font-bold text-[#5b21b6] hover:underline cursor-pointer decoration-transparent">View Calendar</Link>
                         </div>
 
                         {upcomingSessions.length === 0 ? (
@@ -386,7 +353,7 @@ const Mentoring = () => {
                                 </div>
                                 <p className="text-sm font-bold text-slate-800">No upcoming sessions</p>
                                 <p className="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">You don't have any sessions scheduled right now.</p>
-                                <Link to="/directory" className="block w-full bg-primary hover:bg-[#5b21b6] text-white py-2 rounded-xl text-xs font-bold shadow-md cursor-pointer transition-transform hover:-translate-y-0.5 border-0 decoration-transparent">
+                                <Link to="/directory" className="block w-full bg-[#5b21b6] hover:bg-[#4c1d95] text-white py-2.5 rounded-xl text-xs font-bold shadow-md cursor-pointer transition-transform hover:-translate-y-0.5 border-0 decoration-transparent">
                                     Find a Mentor
                                 </Link>
                             </div>
@@ -396,20 +363,20 @@ const Mentoring = () => {
                                     const other = session.mentorId?._id === user?._id ? session.studentId : session.mentorId;
                                     const roomName = session.meetLink?.split('/').pop();
                                     return (
-                                        <div key={idx} className="bg-slate-50 rounded-2xl p-4 border border-slate-100 hover:border-primary/30 transition-colors">
+                                        <div key={idx} className="bg-slate-50 rounded-2xl p-4 border border-slate-100 hover:border-[#5b21b6]/30 transition-colors">
                                             <div className="flex items-center gap-3 mb-3">
-                                                <img src={other?.profilePhoto ? `/${other.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=6366f1&color=fff`} alt="" className="w-10 h-10 rounded-full" />
+                                                <img src={other?.profilePhoto ? `/${other.profilePhoto}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(other?.name || 'U')}&background=5b21b6&color=fff`} alt="" className="w-10 h-10 rounded-full" />
                                                 <div>
                                                     <p className="text-sm font-bold text-slate-900">{other?.name}</p>
                                                     <p className="text-[10px] font-semibold text-slate-500">{session.topic}</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 mb-3 bg-white p-2 rounded-lg border border-slate-100">
-                                                <span className="flex items-center gap-1 text-primary"><HiOutlineCalendar className="w-3.5 h-3.5" /> {session.scheduledDate ? new Date(session.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}</span>
+                                                <span className="flex items-center gap-1 text-[#5b21b6]"><HiOutlineCalendar className="w-3.5 h-3.5" /> {session.scheduledDate ? new Date(session.scheduledDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD'}</span>
                                                 <span className="text-slate-300">•</span>
                                                 <span className="flex items-center gap-1"><HiOutlineClock className="w-3.5 h-3.5" /> {session.scheduledTime || 'TBD'}</span>
                                             </div>
-                                            <a href={`/call/${roomName}`} className="block text-center w-full bg-primary hover:bg-[#5b21b6] text-white py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer">
+                                            <a href={`/call/${roomName}`} className="block text-center w-full bg-[#5b21b6] hover:bg-[#4c1d95] text-white py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer decoration-transparent border-0">
                                                 Join Video Call
                                             </a>
                                         </div>
@@ -434,46 +401,46 @@ const Mentoring = () => {
                                 <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active py-2">
                                     <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-white bg-slate-100 text-slate-500 text-xs font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 transition-colors">
                                         {step.active ? (
-                                            <div className="w-full h-full bg-primary rounded-full flex items-center justify-center text-white">{step.num}</div>
+                                            <div className="w-full h-full bg-[#5b21b6] rounded-full flex items-center justify-center text-white">{step.num}</div>
                                         ) : (
                                             step.num
                                         )}
                                     </div>
                                     <div className="w-[calc(100%-3rem)] md:w-[calc(50%-2rem)] p-3 rounded-2xl hover:bg-slate-50 transition-colors ml-4 md:ml-0">
-                                        <h4 className={`text-xs font-bold ${step.active ? 'text-primary' : 'text-slate-700'}`}>{step.title}</h4>
+                                        <h4 className={`text-xs font-bold ${step.active ? 'text-[#5b21b6]' : 'text-slate-700'}`}>{step.title}</h4>
                                         <p className="text-[10px] text-slate-500 mt-0.5 leading-relaxed">{step.desc}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
                         
-                        <button onClick={() => toast('1. Connect in Directory\n2. Wait for Acceptance\n3. Mentor schedules a call\n4. Join and Grow together!', { duration: 6000, icon: '🚀' })} className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-primary transition-all active:scale-[0.97] text-xs font-bold cursor-pointer">
+                        <button onClick={() => toast('1. Connect in Directory\n2. Wait for Acceptance\n3. Mentor schedules a call\n4. Join and Grow together!', { duration: 6000, icon: '🚀' })} className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-slate-200 text-[#5b21b6] hover:bg-slate-50 transition-all active:scale-[0.97] text-xs font-bold cursor-pointer bg-transparent">
                             <HiOutlineAcademicCap className="w-4 h-4" /> How it works?
                         </button>
                     </div>
 
                     {/* Mentor Discovery CTA */}
-                    <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-3xl p-6 border border-primary/10 shadow-sm relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-[#5b21b6]/5 to-[#5b21b6]/10 rounded-3xl p-6 border border-[#5b21b6]/10 shadow-sm relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
-                            <HiOutlineMagnifyingGlass className="w-24 h-24 text-primary rotate-12" />
+                            <HiOutlineMagnifyingGlass className="w-24 h-24 text-[#5b21b6] rotate-12" />
                         </div>
                         <h3 className="text-sm font-bold text-slate-900 mb-2 relative z-10">Looking for the right mentor?</h3>
                         <p className="text-xs text-slate-600 mb-4 relative z-10">
                             Explore alumni based on:
                         </p>
                         <ul className="text-[10px] text-slate-500 font-semibold mb-5 space-y-1.5 relative z-10">
-                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> skills</li>
-                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> company</li>
-                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> experience</li>
-                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-primary/40 rounded-full"></span> domain</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#5b21b6]/40 rounded-full"></span> skills</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#5b21b6]/40 rounded-full"></span> company</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#5b21b6]/40 rounded-full"></span> experience</li>
+                            <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 bg-[#5b21b6]/40 rounded-full"></span> domain</li>
                         </ul>
-                        <Link to="/directory" className="block text-center w-full bg-white text-primary hover:bg-slate-50 border border-primary/20 py-2.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-sm relative z-10 cursor-pointer decoration-transparent">
+                        <Link to="/directory" className="block text-center w-full bg-white text-[#5b21b6] hover:bg-slate-50 border border-[#5b21b6]/20 py-2.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5 active:scale-[0.97] shadow-sm relative z-10 cursor-pointer decoration-transparent">
                             Explore Mentors
                         </Link>
                     </div>
 
                 </div>
-            )}
+            </div>
 
             {/* Accept Modal */}
             {acceptModalId && (
