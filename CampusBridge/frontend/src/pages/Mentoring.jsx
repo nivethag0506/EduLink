@@ -157,7 +157,7 @@ const Mentoring = () => {
             </div>
 
             {/* Main Layout */}
-            <div className="flex flex-col xl:flex-row gap-8 items-start">
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
                 
                 {/* Left Column: List */}
                 <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
@@ -331,7 +331,7 @@ const Mentoring = () => {
                 </div>
 
                 {/* Right Sidebar */}
-                <div className="w-full xl:w-[320px] shrink-0 space-y-6">
+                <div className="w-full lg:w-[320px] shrink-0 space-y-6">
                     {/* Upcoming Sessions Card */}
                     <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#5b21b6] to-blue-400"></div>
@@ -339,7 +339,6 @@ const Mentoring = () => {
                             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                 <HiOutlineCalendarDays className="w-5 h-5 text-[#5b21b6]" /> Upcoming Sessions
                             </h3>
-                            <Link to="/sessions" className="text-[10px] font-bold text-[#5b21b6] hover:underline cursor-pointer decoration-transparent">View Calendar</Link>
                         </div>
 
                         {upcomingSessions.length === 0 ? (
