@@ -25,6 +25,8 @@ const Mentoring = () => {
     const [tab, setTab] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('recent');
+    const [showSortMenu, setShowSortMenu] = useState(false);
+    const [showFilterMenu, setShowFilterMenu] = useState(false);
 
     // Modal states
     const [acceptModalId, setAcceptModalId] = useState(null);
@@ -158,7 +160,7 @@ const Mentoring = () => {
             <div className="flex flex-col xl:flex-row gap-8 items-start">
                 
                 {/* Left Column: List */}
-                <div className="flex-1 min-w-0 w-full space-y-6">
+                <div className="flex-1 min-w-0 w-full space-y-6 self-start">
                     {/* Controls Row */}
                     <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
                         <div className="flex gap-1 overflow-x-auto w-full md:w-auto hide-scrollbar p-1">
@@ -176,12 +178,28 @@ const Mentoring = () => {
                                     value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
                                     className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs w-full focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-slate-400" />
                             </div>
-                            <button onClick={() => setSortBy(prev => prev === 'recent' ? 'oldest' : 'recent')} className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap">
-                                Sort by: {sortBy === 'recent' ? 'Recent' : 'Oldest'} <HiOutlineChevronRight className={`w-3 h-3 transition-transform ${sortBy === 'recent' ? 'rotate-90' : '-rotate-90'}`} />
-                            </button>
-                            <button onClick={() => toast('Advanced filters are applied automatically based on tabs and search.', { icon: '🔍' })} className="flex items-center justify-center w-9 h-9 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shrink-0">
-                                <HiOutlineAdjustmentsHorizontal className="w-4 h-4" />
-                            </button>
+                            <div className="relative">
+                                <button onClick={() => setShowSortMenu(!showSortMenu)} onBlur={() => setTimeout(() => setShowSortMenu(false), 200)} className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer whitespace-nowrap">
+                                    Sort by: {sortBy === 'recent' ? 'Recent' : 'Oldest'} <HiOutlineChevronRight className={`w-3 h-3 transition-transform ${showSortMenu ? 'rotate-90' : 'rotate-0'}`} />
+                                </button>
+                                {showSortMenu && (
+                                    <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-100 rounded-xl shadow-lg z-20 py-1 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                                        <button onClick={() => { setSortBy('recent'); setShowSortMenu(false); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer border-0 bg-transparent">Newest</button>
+                                        <button onClick={() => { setSortBy('oldest'); setShowSortMenu(false); }} className="w-full text-left px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer border-0 bg-transparent">Oldest</button>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="relative">
+                                <button onClick={() => setShowFilterMenu(!showFilterMenu)} onBlur={() => setTimeout(() => setShowFilterMenu(false), 200)} className={`flex items-center justify-center w-9 h-9 bg-white border ${showFilterMenu ? 'border-primary text-primary' : 'border-slate-200 text-slate-600'} rounded-xl hover:bg-slate-50 transition-all active:scale-[0.97] cursor-pointer shrink-0`}>
+                                    <HiOutlineAdjustmentsHorizontal className="w-4 h-4" />
+                                </button>
+                                {showFilterMenu && (
+                                    <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-xl shadow-lg z-20 p-3 animate-in fade-in slide-in-from-top-2">
+                                        <p className="text-xs font-bold text-slate-800 mb-1">Advanced Filters</p>
+                                        <p className="text-[10px] text-slate-500 leading-relaxed">Currently applied automatically via the search and tabs. More filters coming soon!</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -192,7 +210,7 @@ const Mentoring = () => {
                         
                         <div className="divide-y divide-slate-50">
                             {filtered.length === 0 ? (
-                                <div className="text-center py-20 px-6">
+                                <div className="text-center py-12 px-6">
                                     <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                                         <HiOutlineUserGroup className="w-8 h-8 text-primary" />
                                     </div>
@@ -328,7 +346,7 @@ const Mentoring = () => {
                             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                 <HiOutlineCalendarDays className="w-5 h-5 text-primary" /> Upcoming Sessions
                             </h3>
-                            <Link to="/sessions" className="text-[10px] font-bold text-primary hover:underline cursor-pointer">View Calendar</Link>
+                            <button onClick={() => toast('Calendar Sync coming in the next update!', {icon: '📅'})} className="text-[10px] font-bold text-primary hover:underline cursor-pointer bg-transparent border-0">View Calendar</button>
                         </div>
 
                         {upcomingSessions.length === 0 ? (
