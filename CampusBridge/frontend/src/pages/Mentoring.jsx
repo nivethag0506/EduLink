@@ -113,7 +113,7 @@ const Mentoring = () => {
     if (loading) return <div className="text-center py-20 text-slate-500">Loading sessions...</div>;
 
     return (
-        <div className="max-w-[1400px] mx-auto p-4 md:p-6 lg:p-8 space-y-8 text-slate-800 animate-fade-in">
+        <div className="w-full mx-auto p-4 md:p-6 lg:p-8 space-y-8 text-slate-800 animate-fade-in">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -151,9 +151,9 @@ const Mentoring = () => {
             <div className="flex flex-col xl:flex-row gap-8 items-start">
                 
                 {/* Left Column: List */}
-                <div className="flex-1 w-full space-y-6">
+                <div className="flex-1 min-w-0 w-full space-y-6">
                     {/* Controls Row */}
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
+                    <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-4 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm">
                         <div className="flex gap-1 overflow-x-auto w-full md:w-auto hide-scrollbar p-1">
                             {['all', 'pending', 'accepted', 'upcoming', 'completed', 'rejected', 'as_student'].map(t => (
                                 <button key={t} onClick={() => setTab(t)}
