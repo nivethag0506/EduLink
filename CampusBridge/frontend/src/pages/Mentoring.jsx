@@ -207,13 +207,9 @@ const Mentoring = () => {
                         
                         <div className="divide-y divide-slate-50">
                             {filtered.length === 0 ? (
-                                <div className="text-center py-12 px-6">
-                                    <div className="w-16 h-16 bg-[#5b21b6]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <HiOutlineUserGroup className="w-8 h-8 text-[#5b21b6]" />
-                                    </div>
-                                    <h3 className="text-slate-800 font-bold mb-2">No mentoring sessions yet</h3>
-                                    <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">Connect with experienced alumni and start your mentoring journey.</p>
-                                    <Link to="/directory" className="inline-block bg-[#5b21b6] hover:bg-[#4c1d95] text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all active:scale-[0.97] shadow-md shadow-[#5b21b6]/20 cursor-pointer decoration-transparent border-0">
+                                <div className="text-center py-6 px-6">
+                                    <p className="text-slate-500 text-sm mb-4">No mentoring sessions found.</p>
+                                    <Link to="/directory" className="inline-block bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2 rounded-xl text-xs font-bold transition-all active:scale-[0.97] cursor-pointer decoration-transparent border-0">
                                         Find a Mentor
                                     </Link>
                                 </div>
